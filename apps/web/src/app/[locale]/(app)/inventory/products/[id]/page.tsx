@@ -6,13 +6,26 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { apiFetch } from "@/lib/api";
-import { ArrowLeft, Edit, Trash2, Package, DollarSign, AlertTriangle } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { PageGuard } from "@/lib/page-guard";
+import {
+  ArrowLeft,
+  Edit,
+  Trash2,
+  Package,
+  DollarSign,
+  AlertTriangle,
+  Box,
+  Warehouse,
+  TrendingUp,
+} from "lucide-react";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-function getToken() { return typeof window !== "undefined" ? localStorage.getItem("accessToken") || "" : ""; }
-function getTenant() { return typeof window !== "undefined" ? localStorage.getItem("tenantId") || "" : ""; }
+function getToken() {
+  return typeof window !== "undefined" ? localStorage.getItem("accessToken") || "" : "";
+}
+function getTenant() {
+  return typeof window !== "undefined" ? localStorage.getItem("tenantId") || "" : "";
+}
 
 type Product = {
   id: string;
@@ -35,214 +48,511 @@ type Product = {
   updatedAt: string;
 };
 
-export default function ProductDetailPage({ params }: { params: { id: string } }) {
+function formatCurrency(value: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  }).format(value || 0);
+}
+
+function formatDate(dateStr: string) {
+  if (!dateStr) return "—";
+  try {
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }).format(new Date(dateStr));
+  } catch {
+    return dateStr;
+  }
+}
+
+/* ---------- component ---------- */
+
+export default function ProductDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = React.use(params);
   const t = useTranslations("inventory");
   const router = useRouter();
-  const { id } = params;
 
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["product", id],
     queryFn: () => apiFetch(`${API}/api/v1/inventory/products/${id}`, {
       headers: { Authorization: `Bearer ${getToken()}`, "X-Tenant-ID": getTenant() },
     }),
+    enabled: !!id,
   });
 
-  const product = (data?.data ?? data ?? {}) as Product;
+  const product = (data?.data ?? data ?? null) as Product | null;
 
-  const stockNumber = Number(product.currentStock ?? 0);
-  const reorderNumber = Number(product.reorderLevel ?? 0);
-  const isLowStock = stockNumber <= reorderNumber;
-
-  if (isLoading) {
+  if (isLoading || !product) {
     return (
-      <div className="space-y-4 p-4 md:p-6 lg:p-8">
-        <div className="animate-pulse rounded-xl bg-muted h-64" />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100/40 p-4 sm:p-6 lg:p-8">
+        <div className="mx-auto max-w-5xl space-y-6">
+          <div className="flex items-center justify-between gap-3">
+            <Link
+              href="/inventory"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+              aria-label="Back"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Link>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                {t("product")}
+              </h1>
+              <p className="mt-0.5 text-sm text-slate-500">
+                Product details and stock summary
+              </p>
+            </div>
+          </div>
+          <div className="space-y-6 lg:grid-cols-3">
+            <section className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 animate-pulse">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="h-11 rounded-xl bg-slate-100" />
+                <div className="h-11 rounded-xl bg-slate-100" />
+                <div className="h-11 rounded-xl bg-slate-100" />
+                <div className="h-11 rounded-xl bg-slate-100" />
+              </div>
+            </section>
+            <aside className="lg:col-span-1 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 animate-pulse">
+              <div className="space-y-3">
+                <div className="h-4 w-32 rounded-md bg-slate-100" />
+                <div className="h-4 w-24 rounded-md bg-slate-100" />
+                <div className="h-px bg-slate-200" />
+                <div className="h-10 w-24 rounded-md bg-slate-100" />
+                <div className="h-10 w-24 rounded-md bg-slate-100" />
+              </div>
+            </aside>
+          </div>
+        </div>
       </div>
     );
   }
 
+  const stockNumber = Number(product.currentStock ?? 0);
+  const reorderNumber = Number(product.reorderLevel ?? 0);
+  const isLowStock = stockNumber <= reorderNumber;
+  const margin = product.sellingPrice - product.costPrice;
+  const marginPercent =
+    product.sellingPrice > 0 ? (margin / product.sellingPrice) * 100 : 0;
+  const stockValue = stockNumber * product.costPrice;
+
   return (
-    <div className="space-y-6 p-4 md:p-6 lg:p-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{product.nameEn}</h1>
-          {product.nameBn && <p className="text-muted-foreground lang-bn">{product.nameBn}</p>}
+    <PageGuard requiredPermission="inventory.*" redirectTo="/dashboard">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100/40 p-4 sm:p-6 lg:p-8">
+        <div className="mx-auto max-w-5xl space-y-6">
+          {/* ---------- Header ---------- */}
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3">
+              <Link
+                href="/inventory"
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+                aria-label="Back to products"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Link>
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                  {product.nameEn}
+                </h1>
+                {product.nameBn && (
+                  <p className="mt-0.5 text-sm text-slate-500 lang-bn">
+                    {product.nameBn}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Link
+                href={`/inventory/products/${id}/edit`}
+                className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+              >
+                <Edit className="h-4 w-4" />
+                Edit
+              </Link>
+              <button
+                onClick={() => {
+                  if (
+                    window.confirm(t("deleteConfirm") || "Delete this product?")
+                  ) {
+                    fetch(
+                      `${API}/api/v1/inventory/products/${id}`,
+                      {
+                        method: "DELETE",
+                        headers: {
+                          Authorization: `Bearer ${getToken()}`,
+                          "X-Tenant-ID": getTenant(),
+                        },
+                      }
+                    )
+                      .then(() => router.push("/inventory"))
+                      .then(() => window.location.reload());
+                  }
+                }}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-colors hover:bg-rose-50 hover:text-rose-600"
+                aria-label="Delete product"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* ---------- Stats ---------- */}
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+            {[
+              {
+                label: t("sku"),
+                value: product.sku,
+                icon: Box,
+                tint: "from-blue-500/10 to-blue-500/5",
+                iconColor: "text-blue-600",
+                iconBg: "bg-blue-50",
+              },
+              {
+                label: t("costPrice"),
+                value: formatCurrency(product.costPrice),
+                icon: DollarSign,
+                tint: "from-emerald-500/10 to-emerald-500/5",
+                iconColor: "text-emerald-600",
+                iconBg: "bg-emerald-50",
+              },
+              {
+                label: t("sellingPrice"),
+                value: formatCurrency(product.sellingPrice),
+                icon: DollarSign,
+                tint: "from-blue-500/10 to-blue-500/5",
+                iconColor: "text-blue-600",
+                iconBg: "bg-blue-50",
+              },
+              {
+                label: "Margin",
+                value: `${marginPercent.toFixed(0)}%`,
+                icon: TrendingUp,
+                tint: margin >= 0
+                  ? "from-emerald-500/10 to-emerald-500/5"
+                  : "from-rose-500/10 to-rose-500/5",
+                iconColor: margin >= 0 ? "text-emerald-600" : "text-rose-600",
+                iconBg: margin >= 0 ? "bg-emerald-50" : "bg-rose-50",
+              },
+            ].map((stat) => {
+              const Icon = stat.icon;
+              return (
+                <div
+                  key={stat.label}
+                  className="relative overflow-hidden rounded-2xl border border-slate-200/60 bg-white p-4 shadow-sm sm:p-5 transition-all hover:shadow-md hover:-translate-y-1 group"
+                >
+                  <div
+                    className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${stat.tint} opacity-0 group-hover:opacity-50 transition-opacity duration-300`}
+                  />
+                  <div className="relative flex items-start justify-between">
+                    <div>
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+                        {stat.label}
+                      </p>
+                      <p className="mt-2 text-xl font-bold text-slate-900 sm:text-2xl">
+                        {stat.value}
+                      </p>
+                    </div>
+                    <div
+                      className={`flex h-10 w-10 items-center justify-center rounded-xl ${stat.iconBg} ring-1 ring-slate-100`}
+                    >
+                      <Icon className={`h-5 w-5 ${stat.iconColor}`} />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="lg:grid-cols-3 gap-6">
+            {/* ---------- Main column ---------- */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Overview */}
+              <section className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm sm:p-6 ring-1 ring-inset ring-slate-100/60">
+                <div className="mb-4 flex items-center gap-2">
+                  <Package className="h-4 w-4 text-slate-400" />
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                    Overview
+                  </h2>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 text-sm font-semibold text-slate-700 ring-1 ring-slate-200/60">
+                      {product.sku.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-900">
+                        {product.sku}
+                      </p>
+                      <p className="text-xs text-slate-500">SKU</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 text-sm font-semibold text-slate-700 ring-1 ring-slate-200/60">
+                      {product.categoryNameEn
+                        ? product.categoryNameEn.charAt(0)
+                        : "C"}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-900">
+                        {product.categoryNameEn ?? "—"}
+                      </p>
+                      <p className="text-xs text-slate-500">Category</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 text-sm font-semibold text-slate-700 ring-1 ring-slate-200/60">
+                      {product.unitName ? product.unitName.charAt(0) : "U"}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-900">
+                        {product.unitName ?? "—"}
+                      </p>
+                      <p className="text-xs text-slate-500">Unit</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Warehouse className="h-4 w-4 text-slate-400" />
+                    <div>
+                      <p className="font-semibold text-slate-900">{t("warehouse")}</p>
+                      <p className="text-xs text-slate-500">Stock location</p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Pricing */}
+              <section className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm sm:p-6 ring-1 ring-inset ring-slate-100/60">
+                <div className="mb-4 flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-slate-400" />
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                    Pricing
+                  </h2>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="p-3 rounded-xl border border-slate-200 bg-slate-50">
+                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                      {t("costPrice")}
+                    </p>
+                    <p className="mt-1 text-lg font-bold text-slate-900">
+                      {formatCurrency(product.costPrice)}
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl border border-slate-200 bg-slate-50">
+                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                      {t("sellingPrice")}
+                    </p>
+                    <p className="mt-1 text-lg font-bold text-slate-900">
+                      {formatCurrency(product.sellingPrice)}
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl border border-slate-200 bg-slate-50">
+                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                      Margin
+                    </p>
+                    <p
+                      className={`mt-1 text-lg font-bold ${
+                        margin >= 0
+                          ? "text-emerald-600"
+                          : "text-rose-600"
+                      }`}
+                    >
+                      {formatCurrency(margin)}
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl border border-slate-200 bg-slate-50">
+                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                      Margin %
+                    </p>
+                    <p
+                      className={`mt-1 text-lg font-bold ${
+                        margin >= 0
+                          ? "text-emerald-600"
+                          : "text-rose-600"
+                      }`}
+                    >
+                      {marginPercent.toFixed(1)}%
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              {/* Stock */}
+              <section className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm sm:p-6 ring-1 ring-inset ring-slate-100/60">
+                <div className="mb-4 flex items-center gap-2">
+                  <Box className="h-4 w-4 text-slate-400" />
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                    Stock
+                  </h2>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="p-4 rounded-xl border border-slate-200 bg-white">
+                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                      {t("stock")}
+                    </p>
+                    <p className="mt-1 text-2xl font-bold text-slate-900">
+                      {stockNumber}{product.unitName ? " " + product.unitName : ""}
+                    </p>
+                    {isLowStock && (
+                      <p className="mt-1 text-xs text-amber-600 flex items-center gap-1">
+                        <AlertTriangle className="h-3 w-3" />
+                        {t("lowStock")}
+                      </p>
+                    )}
+                  </div>
+                  <div className="p-4 rounded-xl border border-slate-200 bg-white">
+                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                      {t("reorderLevel")}
+                    </p>
+                    <p className="mt-1 text-2xl font-bold text-slate-900">
+                      {reorderNumber}
+                    </p>
+                  </div>
+                  <div className="col-span-2 p-4 rounded-xl border border-slate-200 bg-white">
+                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                      Stock value
+                    </p>
+                    <p className="mt-1 text-lg font-bold text-slate-900">
+                      {formatCurrency(stockValue)}
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-4 pl-2">
+                  <div className="flex items-center justify-between text-[11px] text-slate-500">
+                    <span>Stock level</span>
+                    <span className="font-medium text-slate-700">
+                      {Math.min(100, (stockNumber / Math.max(reorderNumber, 1)) * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                  <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-500"
+                      style={{
+                        width: `${Math.min(
+                          100,
+                          (stockNumber / Math.max(reorderNumber, 1)) * 100
+                        )}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            {/* ---------- Summary sidebar ---------- */}
+            <aside className="lg:col-span-1">
+              <div className="sticky top-6 space-y-4 rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm sm:p-6 group relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-emerald-500 to-blue-500" />
+                <div className="flex items-center gap-2">
+                  <Package className="h-4 w-4 text-slate-400" />
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                    Summary
+                  </h2>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-slate-500">Selling price</span>
+                    <span className="font-semibold text-slate-900">
+                      {formatCurrency(product.sellingPrice)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-slate-500">Cost price</span>
+                    <span className="font-semibold text-slate-600">
+                      {formatCurrency(product.costPrice)}
+                    </span>
+                  </div>
+                  <div className="h-px bg-slate-200" />
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-slate-500">Margin</span>
+                    <span
+                      className={`font-semibold ${
+                        margin >= 0 ? "text-emerald-600" : "text-rose-600"
+                      }`}
+                    >
+                      {formatCurrency(margin)}
+                    </span>
+                  </div>
+                  <div className="h-px bg-slate-200" />
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-slate-600">
+                      Current stock
+                    </span>
+                    <span className={`text-lg font-bold ${isLowStock ? "text-amber-600" : "text-emerald-600"}`}>
+                      {stockNumber}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="h-px bg-slate-200" />
+
+                {/* Status */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-slate-500">Status</span>
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium ${
+                        product.isActive
+                          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                          : "border-slate-200 bg-slate-50 text-slate-600"
+                      }`}
+                    >
+                      <span
+                        className={`h-1.5 w-1.5 rounded-full ${
+                          product.isActive
+                            ? "bg-emerald-500"
+                            : "bg-slate-400"
+                        }`}
+                      />
+                      {product.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-slate-500">Created</span>
+                    <span className="text-sm text-slate-600">
+                      {formatDate(product.createdAt)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="h-px bg-slate-200" />
+
+                {/* Actions */}
+                <div className="grid gap-2">
+                  <Link
+                    href={`/inventory/products/${id}/edit`}
+                    className="flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-medium text-primary-foreground shadow-sm transition-all hover:shadow-[0_0_20px_hsl(var(--primary)/0.35)] hover:brightness-105 active:scale-[0.99]"
+                  >
+                    <Edit className="h-4 w-4" />
+                    Edit product
+                  </Link>
+                  <Link
+                    href="/inventory/adjust"
+                    className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
+                  >
+                    <Package className="h-4 w-4" />
+                    Adjust stock
+                  </Link>
+                  <Link
+                    href="/inventory/ledger"
+                    className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
+                  >
+                    <Box className="h-4 w-4" />
+                    Stock ledger
+                  </Link>
+                </div>
+              </div>
+            </aside>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button asChild variant="outline" size="sm">
-            <Link href={`/inventory/products/${id}/edit`}>
-              <Edit className="mr-2 h-4 w-4" />
-              {t("edit")}
-            </Link>
-          </Button>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => {
-              if (window.confirm(t("deleteConfirm") || "Delete this product?")) {
-                fetch(`${API}/api/v1/inventory/products/${id}`, {
-                  method: "DELETE",
-                  headers: { Authorization: `Bearer ${getToken()}`, "X-Tenant-ID": getTenant() },
-                })              .then(() => router.push("/inventory"))
-              .then(() => refetch());
-              }
-            }}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
       </div>
-
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card className="border-border/50 shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-sm font-medium">{t("sku")}</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col">
-            <div className="font-mono text-lg font-bold">{product.sku}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/50 shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-sm font-medium">{t("category")}</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col">
-            <div className="text-sm">{product.categoryNameEn || "—"}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/50 shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-sm font-medium">{t("unit")}</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col">
-            <div className="text-sm">{product.unitName || "—"}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/50 shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-sm font-medium">{t("costPrice")}</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col">
-            <div className="text-lg font-bold">৳{(product.costPrice / 100).toFixed(2)}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/50 shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-sm font-medium">{t("sellingPrice")}</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col">
-            <div className="text-lg font-bold">৳{(product.sellingPrice / 100).toFixed(2)}</div>
-          </CardContent>
-        </Card>
-
-        <Card className={cn("border-border/50 shadow-sm", isLowStock ? "border-amber-200/50 bg-amber-50/50" : "")}>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">{t("stock")}</CardTitle>
-            {isLowStock && <AlertTriangle className="h-4 w-4 text-amber-500" />}
-          </CardHeader>
-          <CardContent className="flex flex-col">
-            <div className={cn("text-2xl font-bold", isLowStock ? "text-amber-600" : "text-foreground")}>
-              {stockNumber}{product.unitName ? " " + product.unitName : ""}
-            </div>
-            {isLowStock && (
-              <p className="text-xs text-amber-600 mt-1">{t("lowStock")}</p>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/50 shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-sm font-medium">{t("reorderLevel")}</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col">
-            <div className="text-lg font-bold">{reorderNumber}</div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card className="border-border/50 shadow-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Package className="h-4 w-4 text-muted-foreground" />
-              {t("details")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-start gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/50">
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
-              </div>
-              <div>
-                <p className="font-medium">Cost Price</p>
-                <p className="text-sm text-muted-foreground">৳{(product.costPrice / 100).toFixed(2)}</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/50">
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
-              </div>
-              <div>
-                <p className="font-medium">Selling Price</p>
-                <p className="text-sm text-muted-foreground">৳{(product.sellingPrice / 100).toFixed(2)}</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/50">
-                <Edit className="h-4 w-4 text-muted-foreground" />
-              </div>
-              <div>
-                <p className="font-medium">{t("reorderLevel")}</p>
-                <p className="text-sm text-muted-foreground">{reorderNumber}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/50 shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-sm font-medium">Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <Link
-              href={`/inventory/products/${id}/edit`}
-              className="flex w-full items-center gap-2 rounded-lg border border-input px-3 py-2 text-sm font-medium hover:bg-muted"
-            >
-              <Edit className="h-4 w-4" />
-              Edit Product
-            </Link>
-            <Link
-              href="/inventory/adjust"
-              className="flex w-full items-center gap-2 rounded-lg border border-input px-3 py-2 text-sm font-medium hover:bg-muted"
-            >
-              <Package className="h-4 w-4" />
-              Adjust Stock
-            </Link>
-            <Link
-              href="/inventory/ledger"
-              className="flex w-full items-center gap-2 rounded-lg border border-input px-3 py-2 text-sm font-medium hover:bg-muted"
-            >
-              <Package className="h-4 w-4" />
-              Stock Ledger
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="mt-4 flex justify-end">
-        <Link href="/inventory" className="flex items-center gap-1.5 rounded-lg border border-input px-4 py-2 text-sm font-medium hover:bg-muted">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Products
-        </Link>
-      </div>
-    </div>
+    </PageGuard>
   );
-}
-
-function cn(...classes: (string | undefined | null | false)[]) {
-  return classes.filter(Boolean).join(" ");
 }
