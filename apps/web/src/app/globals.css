@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --radius: 0.75rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.61 0.17 163.22);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.967 0.002 233.12);
+  --secondary-foreground: oklch(0.21 0.004 233.12);
+  --muted: oklch(0.967 0.002 233.12);
+  --muted-foreground: oklch(0.55 0.01 233.12);
+  --accent: oklch(0.967 0.002 233.12);
+  --accent-foreground: oklch(0.21 0.004 233.12);
+  --destructive: oklch(0.577 0.245 27.31);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.929 0.003 233.12);
+  --input: oklch(0.929 0.003 233.12);
+  --ring: oklch(0.708 0.004 233.12);
+  --paid: oklch(0.694 0.18 140.5);
+  --due: oklch(0.762 0.18 68.75);
+  --overdue: oklch(0.629 0.24 28.82);
+  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-bengali: "Noto Sans Bengali", "Hind Siliguri", ui-sans-serif, system-ui, sans-serif;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(1 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(1 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(1 0 0);
+  --primary: oklch(0.61 0.17 163.22);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.269 0.003 233.12);
+  --secondary-foreground: oklch(0.985 0.001 233.12);
+  --muted: oklch(0.269 0.003 233.12);
+  --muted-foreground: oklch(0.708 0.004 233.12);
+  --accent: oklch(0.269 0.003 233.12);
+  --accent-foreground: oklch(0.985 0.001 233.12);
+  --destructive: oklch(0.629 0.24 28.82);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.269 0.003 233.12);
+  --input: oklch(0.269 0.003 233.12);
+  --ring: oklch(0.708 0.004 233.12);
+  --paid: oklch(0.694 0.18 140.5);
+  --due: oklch(0.762 0.18 68.75);
+  --overdue: oklch(0.629 0.24 28.82);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  .lang-bn {
+    font-family: var(--font-bengali);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

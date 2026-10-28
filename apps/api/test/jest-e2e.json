@@ -1,0 +1,11 @@
+module.exports = {
+  rootDir: "test",
+  testMatch: ["**/*.e2e-spec.ts"],
+  transform: {
+    "^.+\\.(t|j)s$": ["ts-jest", { tsconfig: "../tsconfig.json" }],
+  },
+  moduleFileExtensions: ["ts", "js", "json"],
+  testTimeout: 60000,
+  globalSetup: "./setup.ts",
+  globalTeardown: "./teardown.ts",
+};
