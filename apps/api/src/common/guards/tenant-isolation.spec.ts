@@ -18,21 +18,22 @@ describe("Tenant isolation", () => {
   });
 
   it("should never allow user A to access tenant B data via header spoofing when JWT has different tenant", () => {
+    const req: any = {
+      headers: { "x-tenant-id": "tenant-b" },
+      user: { tenantId: "tenant-a", sub: "user-a" },
+    };
     const mockContext: any = {
       getHandler: () => ({}),
       getClass: () => ({}),
       switchToHttp: () => ({
-        getRequest: () => ({
-          headers: { "x-tenant-id": "tenant-b" },
-          user: { tenantId: "tenant-a", sub: "user-a" },
-        }),
+        getRequest: () => req,
       }),
     };
 
     jest.spyOn(reflector, "getAllAndOverride").mockReturnValue(false);
     const result = guard.canActivate(mockContext);
     expect(result).toBe(true);
-    expect(mockContext.switchToHttp().getRequest().tenantId).toBe("tenant-a");
+    expect(req.tenantId).toBe("tenant-a");
     expect(cls.set).toHaveBeenCalledWith("tenantId", "tenant-a");
   });
 
