@@ -23,7 +23,7 @@ export async function apiFetch(
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ message: "Request failed" }));
-    if (res.status === 401 || res.status === 403) {
+    if (res.status === 401) {
       if (typeof window !== "undefined") {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");

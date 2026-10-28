@@ -19,7 +19,7 @@ const CreateCustomerSchema = z.object({
 });
 
 @Controller("sales/customers")
-@UseGuards(TenantGuard, AuthGuard)
+@UseGuards(AuthGuard, TenantGuard)
 export class CustomersController {
   constructor(private svc: CustomersService) {}
 

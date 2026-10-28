@@ -20,7 +20,7 @@ import { TenantId } from "../../common/decorators/tenant-id.decorator";
 import { CurrentUser } from "../../common/decorators/tenant-id.decorator";
 
 @Controller("users")
-@UseGuards(TenantGuard, AuthGuard)
+@UseGuards(AuthGuard, TenantGuard)
 export class UsersController {
   constructor(private usersService: UsersService) {}
 

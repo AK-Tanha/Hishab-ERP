@@ -5,7 +5,7 @@ import { AuthGuard } from "../../../common/guards/auth.guard";
 import { TenantId } from "../../../common/decorators/tenant-id.decorator";
 
 @Controller("accounting/trial-balance")
-@UseGuards(TenantGuard, AuthGuard)
+@UseGuards(AuthGuard, TenantGuard)
 export class TrialBalanceController {
   constructor(private svc: TrialBalanceService) {}
 

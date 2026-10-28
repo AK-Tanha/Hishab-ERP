@@ -8,6 +8,8 @@ export type NavItem = {
   labelKey: string;
   icon: LucideIcon;
   tab?: boolean; // true = shown in the mobile bottom bar
+  requiredPermission?: string | string[]; // permission required to see this item
+  requiredRole?: "owner" | "admin" | "accountant" | "sales" | "storekeeper";
 };
 
 export type NavGroup = { id: string; items: NavItem[] };
@@ -17,23 +19,23 @@ export const navGroups: NavGroup[] = [
     id: "main",
     items: [
       { href: "/dashboard", labelKey: "nav.home", icon: Home, tab: true },
-      { href: "/sales", labelKey: "nav.sales", icon: ShoppingCart, tab: true },
-      { href: "/purchases", labelKey: "nav.purchases", icon: Truck },
-      { href: "/inventory", labelKey: "nav.inventory", icon: Package, tab: true },
+      { href: "/sales", labelKey: "nav.sales", icon: ShoppingCart, tab: true, requiredPermission: ["sales.*", "sales.invoice.view"] },
+      { href: "/purchases", labelKey: "nav.purchases", icon: Truck, requiredPermission: ["purchases.*", "purchases.bill.view"] },
+      { href: "/inventory", labelKey: "nav.inventory", icon: Package, tab: true, requiredPermission: "inventory.*" },
     ],
   },
   {
     id: "finance",
     items: [
-      { href: "/accounting", labelKey: "nav.accounting", icon: BookOpen },
-      { href: "/reports", labelKey: "nav.reports", icon: BarChart3, tab: true },
+      { href: "/accounting", labelKey: "nav.accounting", icon: BookOpen, requiredPermission: "accounting.*" },
+      { href: "/reports", labelKey: "nav.reports", icon: BarChart3, tab: true, requiredPermission: "reports.*" },
     ],
   },
   {
     id: "system",
     items: [
-      { href: "/users", labelKey: "nav.users", icon: Users },
-      { href: "/settings", labelKey: "nav.settings", icon: Settings },
+      { href: "/users", labelKey: "nav.users", icon: Users, requiredPermission: "users.manage" },
+      { href: "/settings", labelKey: "nav.settings", icon: Settings, requiredPermission: "tenants.settings" },
     ],
   },
 ];

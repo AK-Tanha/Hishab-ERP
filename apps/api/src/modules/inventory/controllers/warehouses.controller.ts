@@ -11,7 +11,7 @@ import { Permissions } from "../../../common/decorators/auth.decorators";
 import { TenantId } from "../../../common/decorators/tenant-id.decorator";
 
 @Controller("inventory/warehouses")
-@UseGuards(TenantGuard, AuthGuard)
+@UseGuards(AuthGuard, TenantGuard)
 export class WarehousesController {
   constructor(private svc: WarehousesService) {}
 

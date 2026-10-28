@@ -5,7 +5,7 @@ import { AuthGuard } from "../../../common/guards/auth.guard";
 import { TenantId } from "../../../common/decorators/tenant-id.decorator";
 
 @Controller("reports/dashboard")
-@UseGuards(TenantGuard, AuthGuard)
+@UseGuards(AuthGuard, TenantGuard)
 export class DashboardController {
   constructor(private svc: DashboardService) {}
 

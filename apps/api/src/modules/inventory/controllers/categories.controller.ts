@@ -12,7 +12,7 @@ import { TenantId } from "../../../common/decorators/tenant-id.decorator";
 import { CurrentUser } from "../../../common/decorators/tenant-id.decorator";
 
 @Controller("inventory/categories")
-@UseGuards(TenantGuard, AuthGuard)
+@UseGuards(AuthGuard, TenantGuard)
 export class CategoriesController {
   constructor(private svc: CategoriesService) {}
 

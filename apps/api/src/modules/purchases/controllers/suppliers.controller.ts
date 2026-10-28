@@ -19,7 +19,7 @@ const CreateSupplierSchema = z.object({
 });
 
 @Controller("purchases/suppliers")
-@UseGuards(TenantGuard, AuthGuard)
+@UseGuards(AuthGuard, TenantGuard)
 export class SuppliersController {
   constructor(private svc: SuppliersService) {}
 

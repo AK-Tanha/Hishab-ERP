@@ -37,7 +37,7 @@ const PaymentSchema = z.object({
 });
 
 @Controller("purchases/bills")
-@UseGuards(TenantGuard, AuthGuard)
+@UseGuards(AuthGuard, TenantGuard)
 export class BillsController {
   constructor(private svc: BillsService) {}
 

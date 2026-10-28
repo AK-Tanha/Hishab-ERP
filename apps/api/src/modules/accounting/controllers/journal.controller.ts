@@ -12,7 +12,7 @@ import { TenantId } from "../../../common/decorators/tenant-id.decorator";
 import { CurrentUser } from "../../../common/decorators/tenant-id.decorator";
 
 @Controller("accounting/journal")
-@UseGuards(TenantGuard, AuthGuard)
+@UseGuards(AuthGuard, TenantGuard)
 export class JournalController {
   constructor(private svc: JournalService) {}
 

@@ -44,17 +44,31 @@ async function main() {
   const T = savedTenant.id;
 
   const passwordHash = await bcrypt.hash("password123", 12);
-  const user = userRepo.create({
-    tenantId: T,
-    email: "demo@hishab.local",
-    phone: "01700000000",
-    passwordHash,
-    nameEn: "Demo Owner",
-    nameBn: "ডেমো মালিক",
-    isActive: true,
-    emailVerifiedAt: new Date(),
-  });
-  const savedUser = await userRepo.save(user);
+  
+  // Create users for all roles
+  const usersData = [
+    { email: "owner@demo.com", nameEn: "Demo Owner", nameBn: "ডেমো মালিক", role: "owner" },
+    { email: "admin@demo.com", nameEn: "Admin User", nameBn: "অ্যাডমিন ব্যবহারকারী", role: "admin" },
+    { email: "accountant@demo.com", nameEn: "Accountant", nameBn: "অ্যাকাউন্ট্যান্ট", role: "accountant" },
+    { email: "sales@demo.com", nameEn: "Sales Person", nameBn: "বিক্রয় কর্মী", role: "sales" },
+    { email: "storekeeper@demo.com", nameEn: "Storekeeper", nameBn: "স্টোরকিপার", role: "storekeeper" },
+  ];
+  
+  const createdUsers: any[] = [];
+  for (const u of usersData) {
+    const user = userRepo.create({
+      tenantId: T,
+      email: u.email,
+      phone: "01700000000",
+      passwordHash,
+      nameEn: u.nameEn,
+      nameBn: u.nameBn,
+      isActive: true,
+      emailVerifiedAt: new Date(),
+    });
+    createdUsers.push({ user: await userRepo.save(user), role: u.role });
+  }
+  const savedUser = createdUsers[0].user; // default owner for createdBy
 
   const perms = [
     { code: "users.manage", nameEn: "Manage Users", nameBn: "ব্যবহারকারী পরিচালনা", module: "users", action: "manage" },
@@ -65,6 +79,14 @@ async function main() {
     { code: "purchases.*", nameEn: "All Purchases", nameBn: "সকল ক্রয়", module: "purchases", action: "*" },
     { code: "accounting.*", nameEn: "All Accounting", nameBn: "সকল অ্যাকাউন্টিং", module: "accounting", action: "*" },
     { code: "reports.*", nameEn: "All Reports", nameBn: "সকল রিপোর্ট", module: "reports", action: "*" },
+    { code: "sales.invoice.view", nameEn: "View Sales Invoice", nameBn: "বিক্রয় চালান দেখুন", module: "sales", action: "view" },
+    { code: "sales.payment.*", nameEn: "Sales Payments", nameBn: "বিক্রয় পেমেন্ট", module: "sales", action: "*" },
+    { code: "purchases.bill.view", nameEn: "View Purchase Bill", nameBn: "ক্রয় বিল দেখুন", module: "purchases", action: "view" },
+    { code: "inventory.product.view", nameEn: "View Products", nameBn: "পণ্য দেখুন", module: "inventory", action: "view" },
+    { code: "stock.adjustment", nameEn: "Stock Adjustment", nameBn: "স্টক সমন্বয়", module: "inventory", action: "adjustment" },
+    { code: "reports.sales.view", nameEn: "View Sales Reports", nameBn: "বিক্রয় রিপোর্ট দেখুন", module: "reports", action: "view" },
+    { code: "customers.*", nameEn: "All Customers", nameBn: "সকল গ্রাহক", module: "customers", action: "*" },
+    { code: "products.view", nameEn: "View Products", nameBn: "পণ্য দেখুন", module: "products", action: "view" },
   ];
   const savedPerms = await permRepo.save(perms.map((p) => permRepo.create(p)));
 
@@ -76,10 +98,24 @@ async function main() {
     { code: "storekeeper", nameEn: "Storekeeper", nameBn: "স্টোরকিপার", isSystem: true, tenantId: T },
   ];
   const savedRoles = await roleRepo.save(roles.map((r) => roleRepo.create(r)));
-  const ownerRole = savedRoles.find((r: any) => r.code === "owner");
-  if (ownerRole) {
-    await rolePermRepo.save(savedPerms.map((p: any) => rolePermRepo.create({ roleId: ownerRole.id, permissionId: p.id })));
-    await userRoleRepo.save(userRoleRepo.create({ userId: savedUser.id, roleId: ownerRole.id, assignedAt: new Date() }));
+  
+  const { ROLE_PERMISSIONS } = await import("@hishab/shared");
+  for (const cu of createdUsers) {
+    const role = savedRoles.find((r: any) => r.code === cu.role);
+    if (role) {
+      const rolePerms = ROLE_PERMISSIONS[cu.role as keyof typeof ROLE_PERMISSIONS] || [];
+      if (rolePerms.includes("*")) {
+        await rolePermRepo.save(savedPerms.map((p: any) => rolePermRepo.create({ roleId: role.id, permissionId: p.id })));
+      } else {
+        for (const rp of rolePerms) {
+          const perm = savedPerms.find((p: any) => p.code === rp);
+          if (perm) {
+            await rolePermRepo.save(rolePermRepo.create({ roleId: role.id, permissionId: perm.id }));
+          }
+        }
+      }
+      await userRoleRepo.save(userRoleRepo.create({ userId: cu.user.id, roleId: role.id, assignedAt: new Date() }));
+    }
   }
 
   // Units (system)
@@ -274,7 +310,7 @@ async function main() {
 
   console.log("Seed complete: 20 products, 20 customers, 20 suppliers, 20 invoices, 20 bills");
   console.log("Demo tenant:", T);
-  console.log("Login: demo@hishab.local / password123");
+  console.log("Logins: owner@demo.com, admin@demo.com, accountant@demo.com, sales@demo.com, storekeeper@demo.com / password123");
 
   await AppDataSource.destroy();
 }

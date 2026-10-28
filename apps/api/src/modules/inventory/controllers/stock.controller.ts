@@ -12,7 +12,7 @@ import { TenantId } from "../../../common/decorators/tenant-id.decorator";
 import { CurrentUser } from "../../../common/decorators/tenant-id.decorator";
 
 @Controller("inventory/stock")
-@UseGuards(TenantGuard, AuthGuard)
+@UseGuards(AuthGuard, TenantGuard)
 export class StockController {
   constructor(private svc: StockService) {}
 

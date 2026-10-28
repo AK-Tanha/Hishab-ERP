@@ -5,7 +5,7 @@ import { AuthGuard } from "../../../common/guards/auth.guard";
 import { TenantId } from "../../../common/decorators/tenant-id.decorator";
 
 @Controller("reports")
-@UseGuards(TenantGuard, AuthGuard)
+@UseGuards(AuthGuard, TenantGuard)
 export class ReportsController {
   constructor(private svc: ReportsService) {}
 
