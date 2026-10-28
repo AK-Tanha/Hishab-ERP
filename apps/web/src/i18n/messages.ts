@@ -34,7 +34,9 @@ export const en = {
   nav: {
     home: "Home",
     sales: "Sales",
+    purchases: "Purchases",
     inventory: "Inventory",
+    accounting: "Accounting",
     reports: "Reports",
     more: "More",
     newInvoice: "New Invoice",
@@ -204,7 +206,9 @@ export const bn = {
   nav: {
     home: "হোম",
     sales: "সেলস",
+    purchases: "ক্রয়",
     inventory: "ইনভেন্টরি",
+    accounting: "হিসাবরক্ষণ",
     reports: "রিপোর্ট",
     more: "আরও",
     newInvoice: "নতুন ইনভয়েস",

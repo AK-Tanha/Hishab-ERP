@@ -4,7 +4,7 @@ import * as React from "react";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect } from "react";
-import { Home, ShoppingBag, Package, BarChart3, MoreHorizontal, Plus } from "lucide-react";
+import { Home, ShoppingBag, Package, BarChart3, BookOpen, MoreHorizontal, Plus, Settings, Users } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { LanguageToggle } from "./language-toggle";
 import { cn } from "@/lib/utils";
@@ -13,7 +13,9 @@ import { Link } from "@/i18n/navigation";
 const navItems = [
   { href: "/dashboard", labelKey: "nav.home", icon: Home },
   { href: "/sales", labelKey: "nav.sales", icon: ShoppingBag },
+  { href: "/purchases", labelKey: "nav.purchases", icon: ShoppingBag },
   { href: "/inventory", labelKey: "nav.inventory", icon: Package },
+  { href: "/accounting", labelKey: "nav.accounting", icon: BookOpen },
   { href: "/reports", labelKey: "nav.reports", icon: BarChart3 },
   { href: "/more", labelKey: "nav.more", icon: MoreHorizontal },
 ];

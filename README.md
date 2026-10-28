@@ -100,5 +100,3 @@ Amounts stored as integer poisha (1 BDT = 100 poisha). Never floats.
 
 ## License
 Proprietary. All rights reserved.
-EOF
-echo done
