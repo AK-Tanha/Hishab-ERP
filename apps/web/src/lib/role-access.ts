@@ -3,6 +3,7 @@ export type RoleCode = "owner" | "admin" | "accountant" | "sales" | "storekeeper
 interface JwtPayload {
   sub?: string;
   email?: string;
+  nameEn?: string;
   tenantId?: string;
   roles?: string[];
   permissions?: string[];
@@ -43,6 +44,42 @@ export function getUserPermissions(): string[] {
   if (!token) return [];
   const payload = decodeJwt<JwtPayload>(token);
   return payload?.permissions ?? [];
+}
+
+export function getUserEmail(): string {
+  if (typeof window === "undefined") return "";
+  const token = localStorage.getItem("accessToken");
+  if (!token) return "";
+  const payload = decodeJwt<JwtPayload>(token);
+  return payload?.email ?? "";
+}
+
+export function getUserName(): string {
+  if (typeof window === "undefined") return "";
+  const token = localStorage.getItem("accessToken");
+  if (!token) return "";
+  const payload = decodeJwt<JwtPayload>(token);
+  return payload?.nameEn ?? "";
+}
+
+export async function getCurrentUser(): Promise<{ nameEn?: string; email?: string; tenantId?: string } | null> {
+  if (typeof window === "undefined") return null;
+  const token = localStorage.getItem("accessToken");
+  const tenantId = localStorage.getItem("tenantId");
+  if (!token) return null;
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/v1/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-Tenant-ID": tenantId ?? "",
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
 }
 
 export function hasRole(role: RoleCode): boolean {

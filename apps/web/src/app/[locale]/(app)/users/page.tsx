@@ -4,9 +4,10 @@ import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { apiFetch } from "@/lib/api";
+import { Link } from "@/i18n/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Users } from "lucide-react";
+import { Plus, Users, User } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { PageGuard } from "@/lib/page-guard";
@@ -73,7 +74,10 @@ export default function UsersPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">Edit</Button>
+                        <Link href={`/users/${user.id}/edit`} className="flex items-center gap-1.5 text-sm text-primary hover:underline">
+                          <User className="h-4 w-4" />
+                          Edit
+                        </Link>
                       </TableCell>
                     </TableRow>
                   ))}

@@ -14,6 +14,8 @@ import { ZodValidationPipe } from "../../common/pipes/zod-validation.pipe";
 import { LoginSchema, RegisterTenantSchema } from "@hishab/shared";
 import { Public } from "../../common/decorators/auth.decorators";
 import { TenantId } from "../../common/decorators/tenant-id.decorator";
+import { AuthGuard } from "../../common/guards/auth.guard";
+import { TenantGuard } from "../../common/guards/tenant.guard";
 
 @Controller("auth")
 export class AuthController {
@@ -47,6 +49,7 @@ export class AuthController {
   }
 
   @Get("me")
+  @UseGuards(AuthGuard, TenantGuard)
   me(@Req() req: any) {
     return req.user;
   }

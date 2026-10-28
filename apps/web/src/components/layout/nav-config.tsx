@@ -20,6 +20,7 @@ export const navGroups: NavGroup[] = [
     items: [
       { href: "/dashboard", labelKey: "nav.home", icon: Home, tab: true },
       { href: "/sales", labelKey: "nav.sales", icon: ShoppingCart, tab: true, requiredPermission: ["sales.*", "sales.invoice.view"] },
+      { href: "/sales/customers", labelKey: "nav.customers", icon: Users, requiredPermission: ["sales.*", "customers.*"] },
       { href: "/purchases", labelKey: "nav.purchases", icon: Truck, requiredPermission: ["purchases.*", "purchases.bill.view"] },
       { href: "/inventory", labelKey: "nav.inventory", icon: Package, tab: true, requiredPermission: "inventory.*" },
     ],

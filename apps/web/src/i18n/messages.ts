@@ -34,6 +34,7 @@ export const en = {
   nav: {
     home: "Home",
     sales: "Sales",
+    customers: "Customers",
     purchases: "Purchases",
     inventory: "Inventory",
     accounting: "Accounting",
@@ -219,6 +220,7 @@ export const bn = {
   nav: {
     home: "হোম",
     sales: "সেলস",
+    customers: "গ্রাহক",
     purchases: "ক্রয়",
     inventory: "ইনভেন্টরি",
     accounting: "হিসাবরক্ষণ",

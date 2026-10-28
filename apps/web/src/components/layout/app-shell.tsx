@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useTranslations } from "next-intl";
-import { Plus, MoreHorizontal, LogOut } from "lucide-react";
+import { MoreHorizontal, LogOut } from "lucide-react";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
@@ -11,9 +11,17 @@ import {
   Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger,
 } from "@/components/ui/drawer";
 import { navGroups, quickActions, isActive } from "./nav-config";
-import { canAccessNavItem } from "@/lib/role-access";
+import { canAccessNavItem, getUserName, getCurrentUser } from "@/lib/role-access";
 
 const FOCUS = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+
+// Permission needed for each quick action (the action's link decides, not the page)
+const QUICK_ACTION_PERMISSION: Record<string, string> = {
+  "/dashboard": "sales.*", // dashboard action is "New invoice"
+  "/sales": "sales.*",
+  "/purchases": "purchases.*",
+  "/inventory": "inventory.*",
+};
 
 function useAuthGuard() {
   const router = useRouter();
@@ -33,12 +41,23 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const ready = useAuthGuard();
   const [moreOpen, setMoreOpen] = React.useState(false);
+  const [userName, setUserName] = React.useState(getUserName() || "User");
+
+  // Fetch full user profile from /auth/me so nameEn works even with old JWTs
+  React.useEffect(() => {
+    if (!ready) return;
+    getCurrentUser().then((u) => {
+      if (u?.nameEn) setUserName(u.nameEn);
+    });
+  }, [ready]);
 
   // Filter nav groups based on user permissions
-  const visibleGroups = navGroups.map((group) => {
-    const visibleItems = group.items.filter((item) => canAccessNavItem(item));
-    return { ...group, items: visibleItems };
-  }).filter((group) => group.items.length > 0);
+  const visibleGroups = navGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => canAccessNavItem(item)),
+    }))
+    .filter((group) => group.items.length > 0);
 
   const allItems = visibleGroups.flatMap((g) => g.items);
   const tabItems = allItems.filter((i) => i.tab);
@@ -48,24 +67,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const title = current ? t(current.labelKey) : "Hishab";
   const moreActive = moreItems.some((i) => isActive(pathname, i.href));
 
-  // Redirect if current path is not accessible
+  // Send the user home if the page isn't in their allowed nav
   React.useEffect(() => {
-    if (ready && current === undefined && pathname !== "/login") {
+    if (ready && !current && pathname !== "/dashboard" && pathname !== "/login") {
       router.replace("/dashboard");
     }
   }, [ready, pathname, current, router]);
 
-  // No quick action on "new" forms themselves
+  // Quick action: matches the current section, hidden on "new" forms,
+  // and only shown if the user may use it
   const quickAction = pathname.endsWith("/new")
     ? undefined
     : quickActions.find((q) => {
-        const permMap: Record<string, string> = {
-          "/dashboard": "",
-          "/sales": "sales.*",
-          "/purchases": "purchases.*",
-          "/inventory": "inventory.*",
-        };
-        const perm = permMap[q.match];
+        if (!isActive(pathname, q.match)) return false;
+        const perm = QUICK_ACTION_PERMISSION[q.match];
         return !perm || canAccessNavItem({ requiredPermission: perm });
       });
 
@@ -78,7 +93,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (!ready) return <div className="min-h-dvh bg-background" aria-busy="true" />;
 
   return (
-    <div className="min-h-dvh bg-background text-foreground">
+    <div
+      className="min-h-dvh bg-background text-foreground"
+      style={
+        { "--header-h": "calc(4rem + env(safe-area-inset-top))" } as React.CSSProperties
+      }
+    >
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
@@ -86,24 +106,42 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {t("nav.skipToContent")}
       </a>
 
-      {/* ───────── Tablet rail + desktop sidebar ───────── */}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[72px] flex-col border-r border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 md:flex lg:w-72">
-        <div className="flex h-16 items-center justify-center gap-3 border-b border-border/50 lg:justify-start lg:px-6">
-          <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-primary to-primary/80 font-bold text-primary-foreground shadow-sm">
+      {/* ───────── Header: full width, fixed to the top ───────── */}
+      <header className="fixed inset-x-0 top-0 z-50 flex h-[var(--header-h)] items-stretch border-b border-border bg-background/80 pt-[env(safe-area-inset-top)] backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        {/* Brand cell: same width as the sidebar so the two line up */}
+        <div className="flex items-center gap-3 pl-4 md:w-[72px] md:justify-center md:border-r md:border-border md:pl-0 lg:w-72 lg:justify-start lg:pl-6">
+          <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary to-primary/80 font-bold text-primary-foreground shadow-sm">
             H
           </div>
-          <span className="hidden text-lg font-semibold tracking-tight lg:inline">Hishab ERP</span>
+          <span className="hidden text-lg font-semibold tracking-tight lg:inline">
+            Hishab ERP
+          </span>
         </div>
 
+        <div className="flex min-w-0 flex-1 items-center justify-between gap-3 px-3 md:px-6">
+          <p className="truncate text-lg font-semibold tracking-tight">{title}</p>
+          <div className="flex items-center gap-6">
+            <p className="text-sm">Hello, {userName}</p>
+            <ThemeToggle />
+            <LanguageToggle />
+          </div>
+        </div>
+      </header>
+
+      {/* ───────── Tablet rail + desktop sidebar: starts below the header ───────── */}
+      <aside className="fixed bottom-0 left-0 top-[var(--header-h)] z-40 hidden w-[72px] flex-col border-r border-border bg-card md:flex lg:w-72">
         <nav aria-label={t("nav.main")} className="flex-1 overflow-y-auto px-3 py-4">
           {visibleGroups.map((group, gi) => (
             <div key={group.id} className={cn(gi > 0 && "mt-6")}>
               {gi > 0 && (
-                <div className="mb-2 hidden px-3 lg:block">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    {t(`nav.${group.id}`) || group.id}
+                <>
+                  {/* Divider on the narrow rail */}
+                  <div className="mx-auto mb-2 h-px w-8 bg-border lg:hidden" />
+                  {/* Group heading on the wide sidebar */}
+                  <p className="mb-2 hidden px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground lg:block">
+                    {t(`nav.${group.id}`)}
                   </p>
-                </div>
+                </>
               )}
               <ul className="space-y-1">
                 {group.items.map((item) => {
@@ -117,15 +155,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         title={label}
                         aria-current={active ? "page" : undefined}
                         className={cn(
-                          "group flex items-center justify-center gap-3 rounded-lg px-2.5 py-2 text-sm transition-all lg:justify-start lg:px-3",
+                          "flex items-center justify-center gap-3 rounded-lg px-2.5 py-2 text-sm transition-colors lg:justify-start lg:px-3",
                           FOCUS,
                           active
                             ? "bg-primary text-primary-foreground shadow-sm"
                             : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                         )}
                       >
-                        <Icon className={cn("h-5 w-5 shrink-0", active && "text-primary-foreground")} />
-                        <span className="sr-only truncate lg:not-sr-only font-medium">{label}</span>
+                        <Icon className="h-5 w-5 shrink-0" />
+                        <span className="sr-only truncate font-medium lg:not-sr-only">
+                          {label}
+                        </span>
                       </Link>
                     </li>
                   );
@@ -135,64 +175,42 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
 
-        <div className="flex items-center justify-center border-t border-border/50 p-2 lg:justify-start lg:px-3">
+        <div className="flex items-center justify-center border-t border-border p-2 lg:justify-start lg:px-3">
           <button
             onClick={logout}
             title={t("nav.logout")}
             aria-label={t("nav.logout")}
             className={cn(
-              "flex h-9 items-center justify-center rounded-lg px-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground lg:w-full lg:justify-start lg:px-3 lg:gap-2",
+              "flex h-9 items-center justify-center rounded-lg px-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground lg:w-full lg:justify-start lg:gap-2 lg:px-3",
               FOCUS,
             )}
           >
             <LogOut className="h-4 w-4" />
-            <span className="sr-only lg:not-sr-only text-sm font-medium">{t("nav.logout")}</span>
+            <span className="sr-only text-sm font-medium lg:not-sr-only">
+              {t("nav.logout")}
+            </span>
           </button>
         </div>
       </aside>
 
-      {/* ───────── Main column ───────── */}
-      <div className="md:pl-[72px] lg:pl-72">
-        <header className="sticky top-0 z-30 border-b border-border/50 bg-background/80 pt-[env(safe-area-inset-top)] backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="flex h-16 items-center justify-between gap-3 px-4 md:px-6">
-            <div className="flex items-center gap-2">
-              <p className="truncate text-lg font-semibold tracking-tight">{title}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <ThemeToggle />
-              <LanguageToggle />
-            </div>
-          </div>
-        </header>
-
-        <main
-          id="main-content"
+      {/* ───────── Main: pushed below the header and beside the sidebar ───────── */}
+      <main
+        id="main-content"
         className={cn(
-          "mx-auto w-full max-w-7xl p-4 md:p-6 lg:p-8",
-          quickAction
-            ? "pb-[calc(9rem+env(safe-area-inset-bottom))] md:pb-6"
-            : "pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-6",
+          "pt-[var(--header-h)] md:pl-[72px] lg:pl-72",
         )}
       >
-          {children}
-        </main>
-      </div>
-
-      {/* ───────── Mobile: floating action button ───────── */}
-      {quickAction && (
-        <Link
-          href={quickAction.href}
-          aria-label={t(quickAction.labelKey)}
+        <div
           className={cn(
-            "fixed right-4 z-50 grid h-14 w-14 place-items-center rounded-full bg-primary text-primary-foreground shadow-lg transition-opacity hover:opacity-90 md:hidden",
-            "bottom-[calc(4rem+env(safe-area-inset-bottom)+1rem)]",
-            FOCUS,
+            "mx-auto w-full max-w-7xl p-4 md:p-6 lg:p-8",
+            quickAction
+              ? "pb-[calc(9rem+env(safe-area-inset-bottom))] md:pb-6 lg:pb-8"
+              : "pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-6 lg:pb-8",
           )}
         >
-          <Plus className="h-6 w-6" />
-        </Link>
-      )}
-
+          {children}
+        </div>
+      </main>
       {/* ───────── Mobile: bottom tab bar ───────── */}
       <nav
         aria-label={t("nav.main")}
@@ -295,6 +313,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </li>
         </ul>
       </nav>
+
     </div>
   );
 }
+
+
+
+
+
+
+ 

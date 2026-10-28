@@ -54,7 +54,7 @@ export class AuthService {
     }
 
     const { roles, permissions } = await this.usersService.getUserRolesAndPermissions(user.id);
-    const payload = { sub: user.id, email: user.email, tenantId: user.tenantId, roles, permissions };
+    const payload = { sub: user.id, email: user.email, nameEn: user.nameEn, tenantId: user.tenantId, roles, permissions };
     const accessToken = this.jwtService.sign(payload, { expiresIn: this.config.get<string>("jwt.accessExpiresIn") as any });
     const refreshToken = this.jwtService.sign(payload, { secret: this.config.get<string>("jwt.refreshSecret"), expiresIn: this.config.get<string>("jwt.refreshExpiresIn") as any });
 
@@ -77,6 +77,7 @@ export class AuthService {
       const accessToken = this.jwtService.sign({
         sub: payload.sub,
         email: payload.email,
+        nameEn: payload.nameEn,
         tenantId: payload.tenantId,
         roles: payload.roles,
         permissions: payload.permissions,
