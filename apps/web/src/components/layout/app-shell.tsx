@@ -50,6 +50,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const t = useTranslations();
   const pathname = usePathname();
   const router = useRouter();
+ // const logoSrc = useLocale() === "bn" ? "/herpLogoBN.png" : "/herpLogo.png";
   const logoText = useLocale() === "bn" ? "সহজ হিসাব" : "Easy Accounting";
   const logo = useLocale() === "bn" ? "হিসাব ERP" : "Hisab ERP";
   const ready = useAuthGuard();
@@ -146,10 +147,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <Image
             src="/dashboardlogo.png"
             alt="Hishab ERP"
-            width={120}
-            height={48}
-            priority
-            className="h-9 w-auto bg-[#FAFAFA]  dark:bg-[#0A0A0A] rounded-md max-w-[110px] shrink-0 object-contain transition-opacity hover:opacity-90 md:h-10 lg:h-11"
+            width={75}
+            height={44}
+            className="h-11 w-auto shrink-0 rounded-xl object-cover shadow-sm"
           />
           <div className="hidden flex-col lg:flex">
             <span className="text-sm font-semibold tracking-tight text-foreground leading-tight">

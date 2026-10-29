@@ -1,5 +1,5 @@
 import {
-  Home, ShoppingCart, Truck, Package, BookOpen, BarChart3, Users, Settings,
+  Home, FileText, Truck, Package, BookOpen, BarChart3, Users, Settings,
   type LucideIcon,
 } from "lucide-react";
 
@@ -16,11 +16,21 @@ export type NavGroup = { id: string; items: NavItem[] };
 
 export const navGroups: NavGroup[] = [
   {
-    id: "main",
+    id: "home",
     items: [
       { href: "/dashboard", labelKey: "nav.home", icon: Home, tab: true },
-      { href: "/sales", labelKey: "nav.sales", icon: ShoppingCart, tab: true, requiredPermission: ["sales.*", "sales.invoice.view"] },
+    ],
+  },
+  {
+    id: "sales",
+    items: [
+      { href: "/sales/invoices", labelKey: "nav.invoices", icon: FileText, tab: true, requiredPermission: ["sales.*", "sales.invoice.view"] },
       { href: "/sales/customers", labelKey: "nav.customers", icon: Users, requiredPermission: ["sales.*", "customers.*"] },
+    ],
+  },
+  {
+    id: "procurement",
+    items: [
       { href: "/purchases", labelKey: "nav.purchases", icon: Truck, requiredPermission: ["purchases.*", "purchases.bill.view"] },
       { href: "/inventory", labelKey: "nav.inventory", icon: Package, tab: true, requiredPermission: "inventory.*" },
     ],
