@@ -1,19 +1,29 @@
 "use client";
 
 import * as React from "react";
-import { useTranslations } from "next-intl";
-import { MoreHorizontal, LogOut } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { MoreHorizontal, LogOut, Plus } from "lucide-react";
+import Image from "next/image";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
 import { LanguageToggle } from "./language-toggle";
 import {
-  Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger,
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
 } from "@/components/ui/drawer";
 import { navGroups, quickActions, isActive } from "./nav-config";
-import { canAccessNavItem, getUserName, getCurrentUser } from "@/lib/role-access";
+import {
+  canAccessNavItem,
+  getUserName,
+  getCurrentUser,
+} from "@/lib/role-access";
 
-const FOCUS = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+const FOCUS =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
 // Permission needed for each quick action (the action's link decides, not the page)
 const QUICK_ACTION_PERMISSION: Record<string, string> = {
@@ -28,7 +38,8 @@ function useAuthGuard() {
   const [ready, setReady] = React.useState(false);
   React.useEffect(() => {
     const ok =
-      !!localStorage.getItem("accessToken") && !!localStorage.getItem("tenantId");
+      !!localStorage.getItem("accessToken") &&
+      !!localStorage.getItem("tenantId");
     if (ok) setReady(true);
     else router.replace("/login");
   }, [router]);
@@ -39,6 +50,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const t = useTranslations();
   const pathname = usePathname();
   const router = useRouter();
+  const logoText = useLocale() === "bn" ? "সহজ হিসাব" : "Easy Accounting";
+  const logo = useLocale() === "bn" ? "হিসাব ERP" : "Hisab ERP";
   const ready = useAuthGuard();
   const [moreOpen, setMoreOpen] = React.useState(false);
   const [userName, setUserName] = React.useState(getUserName() || "User");
@@ -69,7 +82,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   // Send the user home if the page isn't in their allowed nav
   React.useEffect(() => {
-    if (ready && !current && pathname !== "/dashboard" && pathname !== "/login") {
+    if (
+      ready &&
+      !current &&
+      pathname !== "/dashboard" &&
+      pathname !== "/login"
+    ) {
       router.replace("/dashboard");
     }
   }, [ready, pathname, current, router]);
@@ -90,13 +108,28 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     router.replace("/login");
   };
 
-  if (!ready) return <div className="min-h-dvh bg-background" aria-busy="true" />;
+  if (!ready) {
+    return (
+      <div
+        className="flex min-h-dvh items-center justify-center bg-background"
+        aria-busy="true"
+      >
+        <div
+          className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"
+          role="status"
+          aria-label={t("common.loading")}
+        />
+      </div>
+    );
+  }
 
   return (
     <div
       className="min-h-dvh bg-background text-foreground"
       style={
-        { "--header-h": "calc(4rem + env(safe-area-inset-top))" } as React.CSSProperties
+        {
+          "--header-h": "calc(4rem + env(safe-area-inset-top))",
+        } as React.CSSProperties
       }
     >
       <a
@@ -110,18 +143,46 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <header className="fixed inset-x-0 top-0 z-50 flex h-[var(--header-h)] items-stretch border-b border-border bg-background/80 pt-[env(safe-area-inset-top)] backdrop-blur supports-[backdrop-filter]:bg-background/60">
         {/* Brand cell: same width as the sidebar so the two line up */}
         <div className="flex items-center gap-3 pl-4 md:w-[72px] md:justify-center md:border-r md:border-border md:pl-0 lg:w-72 lg:justify-start lg:pl-6">
-          <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary to-primary/80 font-bold text-primary-foreground shadow-sm">
-            H
+          <Image
+            src="/dashboardlogo.png"
+            alt="Hishab ERP"
+            width={120}
+            height={48}
+            priority
+            className="h-9 w-auto bg-[#FAFAFA]  dark:bg-[#0A0A0A] rounded-md max-w-[110px] shrink-0 object-contain transition-opacity hover:opacity-90 md:h-10 lg:h-11"
+          />
+          <div className="hidden flex-col lg:flex">
+            <span className="text-sm font-semibold tracking-tight text-foreground leading-tight">
+              {logo}
+            </span>
+            <span className="text-xs text-muted-foreground leading-tight">
+              {logoText}
+            </span>
           </div>
-          <span className="hidden text-lg font-semibold tracking-tight lg:inline">
-            Hishab ERP
-          </span>
         </div>
 
         <div className="flex min-w-0 flex-1 items-center justify-between gap-3 px-3 md:px-6">
-          <p className="truncate text-lg font-semibold tracking-tight">{title}</p>
-          <div className="flex items-center gap-6">
-            <p className="text-sm">Hello, {userName}</p>
+          <p className="truncate text-lg font-semibold tracking-tight">
+            {title}
+          </p>
+          <div className="flex shrink-0 items-center gap-2 md:gap-3">
+            <div className="flex items-center gap-2">
+              <span
+                aria-hidden="true"
+                className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-[11px] font-bold text-primary"
+              >
+                {userName
+                  .split(/\s+/)
+                  .filter(Boolean)
+                  .map((w) => w[0])
+                  .slice(0, 2)
+                  .join("")
+                  .toUpperCase() || "U"}
+              </span>
+              <span className="hidden max-w-[10rem] truncate text-sm font-medium md:inline">
+                {userName}
+              </span>
+            </div>
             <ThemeToggle />
             <LanguageToggle />
           </div>
@@ -130,7 +191,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* ───────── Tablet rail + desktop sidebar: starts below the header ───────── */}
       <aside className="fixed bottom-0 left-0 top-[var(--header-h)] z-40 hidden w-[72px] flex-col border-r border-border bg-card md:flex lg:w-72">
-        <nav aria-label={t("nav.main")} className="flex-1 overflow-y-auto px-3 py-4">
+        <nav
+          aria-label={t("nav.main")}
+          className="flex-1 overflow-y-auto px-3 py-4"
+        >
           {visibleGroups.map((group, gi) => (
             <div key={group.id} className={cn(gi > 0 && "mt-6")}>
               {gi > 0 && (
@@ -196,9 +260,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* ───────── Main: pushed below the header and beside the sidebar ───────── */}
       <main
         id="main-content"
-        className={cn(
-          "pt-[var(--header-h)] md:pl-[72px] lg:pl-72",
-        )}
+        className={cn("pt-[var(--header-h)] md:pl-[72px] lg:pl-72")}
       >
         <div
           className={cn(
@@ -211,6 +273,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {children}
         </div>
       </main>
+      {/* ───────── Mobile: quick-action FAB (page padding reserves 9rem when shown) ───────── */}
+      {quickAction && (
+        <Link
+          href={quickAction.href}
+          aria-label={t(quickAction.labelKey)}
+          className={cn(
+            "fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] right-4 z-40 inline-flex h-12 items-center gap-2 rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground shadow-lg transition-transform hover:brightness-105 active:scale-95 md:hidden",
+            FOCUS,
+          )}
+        >
+          <Plus className="h-5 w-5" />
+          {t(quickAction.labelKey)}
+        </Link>
+      )}
       {/* ───────── Mobile: bottom tab bar ───────── */}
       <nav
         aria-label={t("nav.main")}
@@ -313,14 +389,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </li>
         </ul>
       </nav>
-
     </div>
   );
 }
-
-
-
-
-
-
- 

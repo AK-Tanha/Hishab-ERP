@@ -18,8 +18,9 @@ import {
   Warehouse,
   TrendingUp,
 } from "lucide-react";
+import { apiUrl } from "@/lib/config";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API = apiUrl;
 function getToken() {
   return typeof window !== "undefined" ? localStorage.getItem("accessToken") || "" : "";
 }
@@ -92,41 +93,41 @@ export default function ProductDetailPage({
 
   if (isLoading || !product) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100/40 p-4 sm:p-6 lg:p-8">
+      <div className="bg-gradient-to-br from-slate-50 via-white to-slate-100/40 dark:bg-none">
         <div className="mx-auto max-w-5xl space-y-6">
           <div className="flex items-center justify-between gap-3">
             <Link
               href="/inventory"
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 shadow-sm transition-colors hover:bg-slate-50 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-slate-100"
               aria-label="Back"
             >
               <ArrowLeft className="h-5 w-5" />
             </Link>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
                 {t("product")}
               </h1>
-              <p className="mt-0.5 text-sm text-slate-500">
+              <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                 Product details and stock summary
               </p>
             </div>
           </div>
           <div className="space-y-6 lg:grid-cols-3">
-            <section className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 animate-pulse">
+            <section className="lg:col-span-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm sm:p-6 animate-pulse">
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="h-11 rounded-xl bg-slate-100" />
-                <div className="h-11 rounded-xl bg-slate-100" />
-                <div className="h-11 rounded-xl bg-slate-100" />
-                <div className="h-11 rounded-xl bg-slate-100" />
+                <div className="h-11 rounded-xl bg-slate-100 dark:bg-slate-800" />
+                <div className="h-11 rounded-xl bg-slate-100 dark:bg-slate-800" />
+                <div className="h-11 rounded-xl bg-slate-100 dark:bg-slate-800" />
+                <div className="h-11 rounded-xl bg-slate-100 dark:bg-slate-800" />
               </div>
             </section>
-            <aside className="lg:col-span-1 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 animate-pulse">
+            <aside className="lg:col-span-1 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm sm:p-6 animate-pulse">
               <div className="space-y-3">
-                <div className="h-4 w-32 rounded-md bg-slate-100" />
-                <div className="h-4 w-24 rounded-md bg-slate-100" />
-                <div className="h-px bg-slate-200" />
-                <div className="h-10 w-24 rounded-md bg-slate-100" />
-                <div className="h-10 w-24 rounded-md bg-slate-100" />
+                <div className="h-4 w-32 rounded-md bg-slate-100 dark:bg-slate-800" />
+                <div className="h-4 w-24 rounded-md bg-slate-100 dark:bg-slate-800" />
+                <div className="h-px bg-slate-200 dark:bg-slate-700" />
+                <div className="h-10 w-24 rounded-md bg-slate-100 dark:bg-slate-800" />
+                <div className="h-10 w-24 rounded-md bg-slate-100 dark:bg-slate-800" />
               </div>
             </aside>
           </div>
@@ -145,24 +146,24 @@ export default function ProductDetailPage({
 
   return (
     <PageGuard requiredPermission="inventory.*" redirectTo="/dashboard">
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100/40 p-4 sm:p-6 lg:p-8">
+      <div className="bg-gradient-to-br from-slate-50 via-white to-slate-100/40 dark:bg-none">
         <div className="mx-auto max-w-5xl space-y-6">
           {/* ---------- Header ---------- */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
               <Link
                 href="/inventory"
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 shadow-sm transition-colors hover:bg-slate-50 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-slate-100"
                 aria-label="Back to products"
               >
                 <ArrowLeft className="h-5 w-5" />
               </Link>
               <div>
-                <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
                   {product.nameEn}
                 </h1>
                 {product.nameBn && (
-                  <p className="mt-0.5 text-sm text-slate-500 lang-bn">
+                  <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400 lang-bn">
                     {product.nameBn}
                   </p>
                 )}
@@ -171,7 +172,7 @@ export default function ProductDetailPage({
             <div className="flex items-center gap-2">
               <Link
                 href={`/inventory/products/${id}/edit`}
-                className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+                className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 text-sm font-medium text-slate-600 dark:text-slate-400 shadow-sm transition-colors hover:bg-slate-50 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-slate-100"
               >
                 <Edit className="h-4 w-4" />
                 Edit
@@ -195,7 +196,7 @@ export default function ProductDetailPage({
                       .then(() => window.location.reload());
                   }
                 }}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-colors hover:bg-rose-50 hover:text-rose-600"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 shadow-sm transition-colors hover:bg-rose-50 hover:text-rose-600"
                 aria-label="Delete product"
               >
                 <Trash2 className="h-4 w-4" />
@@ -245,22 +246,22 @@ export default function ProductDetailPage({
               return (
                 <div
                   key={stat.label}
-                  className="relative overflow-hidden rounded-2xl border border-slate-200/60 bg-white p-4 shadow-sm sm:p-5 transition-all hover:shadow-md hover:-translate-y-1 group"
+                  className="relative overflow-hidden rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-4 shadow-sm sm:p-5 transition-all hover:shadow-md hover:-translate-y-1 group"
                 >
                   <div
                     className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${stat.tint} opacity-0 group-hover:opacity-50 transition-opacity duration-300`}
                   />
                   <div className="relative flex items-start justify-between">
                     <div>
-                      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         {stat.label}
                       </p>
-                      <p className="mt-2 text-xl font-bold text-slate-900 sm:text-2xl">
+                      <p className="mt-2 text-xl font-bold text-slate-900 dark:text-slate-100 sm:text-2xl">
                         {stat.value}
                       </p>
                     </div>
                     <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-xl ${stat.iconBg} ring-1 ring-slate-100`}
+                      className={`flex h-10 w-10 items-center justify-center rounded-xl ${stat.iconBg} ring-1 ring-slate-100 dark:ring-slate-700`}
                     >
                       <Icon className={`h-5 w-5 ${stat.iconColor}`} />
                     </div>
@@ -274,86 +275,86 @@ export default function ProductDetailPage({
             {/* ---------- Main column ---------- */}
             <div className="lg:col-span-2 space-y-6">
               {/* Overview */}
-              <section className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm sm:p-6 ring-1 ring-inset ring-slate-100/60">
+              <section className="rounded-2xl border border-slate-200/70 dark:border-slate-700/70 bg-white dark:bg-slate-900 p-5 shadow-sm sm:p-6 ring-1 ring-inset ring-slate-100/60 dark:ring-slate-700/60">
                 <div className="mb-4 flex items-center gap-2">
-                  <Package className="h-4 w-4 text-slate-400" />
-                  <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                  <Package className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     Overview
                   </h2>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 text-sm font-semibold text-slate-700 ring-1 ring-slate-200/60">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-slate-100 dark:from-slate-700 to-slate-200 dark:to-slate-600 text-sm font-semibold text-slate-700 dark:text-slate-300 ring-1 ring-slate-200/60 dark:ring-slate-700/60">
                       {product.sku.charAt(0)}
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-900">
+                      <p className="font-semibold text-slate-900 dark:text-slate-100">
                         {product.sku}
                       </p>
-                      <p className="text-xs text-slate-500">SKU</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">SKU</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 text-sm font-semibold text-slate-700 ring-1 ring-slate-200/60">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-slate-100 dark:from-slate-700 to-slate-200 dark:to-slate-600 text-sm font-semibold text-slate-700 dark:text-slate-300 ring-1 ring-slate-200/60 dark:ring-slate-700/60">
                       {product.categoryNameEn
                         ? product.categoryNameEn.charAt(0)
                         : "C"}
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-900">
+                      <p className="font-semibold text-slate-900 dark:text-slate-100">
                         {product.categoryNameEn ?? "—"}
                       </p>
-                      <p className="text-xs text-slate-500">Category</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Category</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 text-sm font-semibold text-slate-700 ring-1 ring-slate-200/60">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-slate-100 dark:from-slate-700 to-slate-200 dark:to-slate-600 text-sm font-semibold text-slate-700 dark:text-slate-300 ring-1 ring-slate-200/60 dark:ring-slate-700/60">
                       {product.unitName ? product.unitName.charAt(0) : "U"}
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-900">
+                      <p className="font-semibold text-slate-900 dark:text-slate-100">
                         {product.unitName ?? "—"}
                       </p>
-                      <p className="text-xs text-slate-500">Unit</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Unit</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Warehouse className="h-4 w-4 text-slate-400" />
+                    <Warehouse className="h-4 w-4 text-slate-400 dark:text-slate-500" />
                     <div>
-                      <p className="font-semibold text-slate-900">{t("warehouse")}</p>
-                      <p className="text-xs text-slate-500">Stock location</p>
+                      <p className="font-semibold text-slate-900 dark:text-slate-100">{t("warehouse")}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Stock location</p>
                     </div>
                   </div>
                 </div>
               </section>
 
               {/* Pricing */}
-              <section className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm sm:p-6 ring-1 ring-inset ring-slate-100/60">
+              <section className="rounded-2xl border border-slate-200/70 dark:border-slate-700/70 bg-white dark:bg-slate-900 p-5 shadow-sm sm:p-6 ring-1 ring-inset ring-slate-100/60 dark:ring-slate-700/60">
                 <div className="mb-4 flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-slate-400" />
-                  <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                  <DollarSign className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     Pricing
                   </h2>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="p-3 rounded-xl border border-slate-200 bg-slate-50">
-                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                  <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800">
+                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">
                       {t("costPrice")}
                     </p>
-                    <p className="mt-1 text-lg font-bold text-slate-900">
+                    <p className="mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">
                       {formatCurrency(product.costPrice)}
                     </p>
                   </div>
-                  <div className="p-3 rounded-xl border border-slate-200 bg-slate-50">
-                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                  <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800">
+                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">
                       {t("sellingPrice")}
                     </p>
-                    <p className="mt-1 text-lg font-bold text-slate-900">
+                    <p className="mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">
                       {formatCurrency(product.sellingPrice)}
                     </p>
                   </div>
-                  <div className="p-3 rounded-xl border border-slate-200 bg-slate-50">
-                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                  <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800">
+                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">
                       Margin
                     </p>
                     <p
@@ -366,8 +367,8 @@ export default function ProductDetailPage({
                       {formatCurrency(margin)}
                     </p>
                   </div>
-                  <div className="p-3 rounded-xl border border-slate-200 bg-slate-50">
-                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                  <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800">
+                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">
                       Margin %
                     </p>
                     <p
@@ -384,19 +385,19 @@ export default function ProductDetailPage({
               </section>
 
               {/* Stock */}
-              <section className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm sm:p-6 ring-1 ring-inset ring-slate-100/60">
+              <section className="rounded-2xl border border-slate-200/70 dark:border-slate-700/70 bg-white dark:bg-slate-900 p-5 shadow-sm sm:p-6 ring-1 ring-inset ring-slate-100/60 dark:ring-slate-700/60">
                 <div className="mb-4 flex items-center gap-2">
-                  <Box className="h-4 w-4 text-slate-400" />
-                  <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                  <Box className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     Stock
                   </h2>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="p-4 rounded-xl border border-slate-200 bg-white">
-                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                  <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">
                       {t("stock")}
                     </p>
-                    <p className="mt-1 text-2xl font-bold text-slate-900">
+                    <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">
                       {stockNumber}{product.unitName ? " " + product.unitName : ""}
                     </p>
                     {isLowStock && (
@@ -406,31 +407,31 @@ export default function ProductDetailPage({
                       </p>
                     )}
                   </div>
-                  <div className="p-4 rounded-xl border border-slate-200 bg-white">
-                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                  <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">
                       {t("reorderLevel")}
                     </p>
-                    <p className="mt-1 text-2xl font-bold text-slate-900">
+                    <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">
                       {reorderNumber}
                     </p>
                   </div>
-                  <div className="col-span-2 p-4 rounded-xl border border-slate-200 bg-white">
-                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                  <div className="col-span-2 p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">
                       Stock value
                     </p>
-                    <p className="mt-1 text-lg font-bold text-slate-900">
+                    <p className="mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">
                       {formatCurrency(stockValue)}
                     </p>
                   </div>
                 </div>
                 <div className="mt-4 pl-2">
-                  <div className="flex items-center justify-between text-[11px] text-slate-500">
+                  <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
                     <span>Stock level</span>
-                    <span className="font-medium text-slate-700">
+                    <span className="font-medium text-slate-700 dark:text-slate-300">
                       {Math.min(100, (stockNumber / Math.max(reorderNumber, 1)) * 100).toFixed(0)}%
                     </span>
                   </div>
-                  <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                  <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                     <div
                       className="h-full rounded-full bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-500"
                       style={{
@@ -447,31 +448,31 @@ export default function ProductDetailPage({
 
             {/* ---------- Summary sidebar ---------- */}
             <aside className="lg:col-span-1">
-              <div className="sticky top-6 space-y-4 rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm sm:p-6 group relative overflow-hidden">
+              <div className="sticky top-6 space-y-4 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-5 shadow-sm sm:p-6 group relative overflow-hidden">
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-emerald-500 to-blue-500" />
                 <div className="flex items-center gap-2">
-                  <Package className="h-4 w-4 text-slate-400" />
-                  <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                  <Package className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     Summary
                   </h2>
                 </div>
 
                 <div className="space-y-3">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500">Selling price</span>
-                    <span className="font-semibold text-slate-900">
+                    <span className="text-slate-500 dark:text-slate-400">Selling price</span>
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">
                       {formatCurrency(product.sellingPrice)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500">Cost price</span>
-                    <span className="font-semibold text-slate-600">
+                    <span className="text-slate-500 dark:text-slate-400">Cost price</span>
+                    <span className="font-semibold text-slate-600 dark:text-slate-400">
                       {formatCurrency(product.costPrice)}
                     </span>
                   </div>
-                  <div className="h-px bg-slate-200" />
+                  <div className="h-px bg-slate-200 dark:bg-slate-700" />
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500">Margin</span>
+                    <span className="text-slate-500 dark:text-slate-400">Margin</span>
                     <span
                       className={`font-semibold ${
                         margin >= 0 ? "text-emerald-600" : "text-rose-600"
@@ -480,9 +481,9 @@ export default function ProductDetailPage({
                       {formatCurrency(margin)}
                     </span>
                   </div>
-                  <div className="h-px bg-slate-200" />
+                  <div className="h-px bg-slate-200 dark:bg-slate-700" />
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-slate-600">
+                    <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
                       Current stock
                     </span>
                     <span className={`text-lg font-bold ${isLowStock ? "text-amber-600" : "text-emerald-600"}`}>
@@ -491,17 +492,17 @@ export default function ProductDetailPage({
                   </div>
                 </div>
 
-                <div className="h-px bg-slate-200" />
+                <div className="h-px bg-slate-200 dark:bg-slate-700" />
 
                 {/* Status */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500">Status</span>
+                    <span className="text-slate-500 dark:text-slate-400">Status</span>
                     <span
                       className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium ${
                         product.isActive
                           ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                          : "border-slate-200 bg-slate-50 text-slate-600"
+                          : "border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
                       }`}
                     >
                       <span
@@ -515,14 +516,14 @@ export default function ProductDetailPage({
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500">Created</span>
-                    <span className="text-sm text-slate-600">
+                    <span className="text-slate-500 dark:text-slate-400">Created</span>
+                    <span className="text-sm text-slate-600 dark:text-slate-400">
                       {formatDate(product.createdAt)}
                     </span>
                   </div>
                 </div>
 
-                <div className="h-px bg-slate-200" />
+                <div className="h-px bg-slate-200 dark:bg-slate-700" />
 
                 {/* Actions */}
                 <div className="grid gap-2">
@@ -535,14 +536,14 @@ export default function ProductDetailPage({
                   </Link>
                   <Link
                     href="/inventory/adjust"
-                    className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
+                    className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-medium text-slate-600 dark:text-slate-400 transition-colors hover:bg-slate-50 hover:dark:bg-slate-800"
                   >
                     <Package className="h-4 w-4" />
                     Adjust stock
                   </Link>
                   <Link
                     href="/inventory/ledger"
-                    className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
+                    className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-medium text-slate-600 dark:text-slate-400 transition-colors hover:bg-slate-50 hover:dark:bg-slate-800"
                   >
                     <Box className="h-4 w-4" />
                     Stock ledger

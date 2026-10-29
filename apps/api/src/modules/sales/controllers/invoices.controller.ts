@@ -43,8 +43,8 @@ export class InvoicesController {
   constructor(private svc: InvoicesService) {}
 
   @Get()
-  list(@TenantId() tenantId: string) {
-    return this.svc.list(tenantId);
+  list(@TenantId() tenantId: string, @Query("customerId") customerId?: string) {
+    return this.svc.list(tenantId, customerId);
   }
 
   @Get(":id")

@@ -41,7 +41,8 @@ export const navGroups: NavGroup[] = [
   },
 ];
 
-// The primary action for each section (FAB on mobile, header button on desktop)
+// The primary action for each section (quick-action FAB on mobile;
+// each page renders its own CTA button in its header on desktop)
 export const quickActions = [
   { match: "/dashboard", href: "/sales/new", labelKey: "nav.newInvoice" },
   { match: "/sales", href: "/sales/new", labelKey: "nav.newInvoice" },

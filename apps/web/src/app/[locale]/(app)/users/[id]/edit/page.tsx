@@ -15,8 +15,9 @@ import {
   Mail,
   Phone,
 } from "lucide-react";
+import { apiUrl } from "@/lib/config";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API = apiUrl;
 function getToken() {
   return typeof window !== "undefined" ? localStorage.getItem("accessToken") || "" : "";
 }
@@ -66,13 +67,13 @@ function Field({
     <div className="space-y-1.5">
       <label
         htmlFor={htmlFor}
-        className="flex items-center gap-1 text-sm font-medium text-slate-700"
+        className="flex items-center gap-1 text-sm font-medium text-slate-700 dark:text-slate-300"
       >
         {label}
         {required && <span className="text-rose-500">*</span>}
       </label>
       {children}
-      {hint && <p className="text-xs text-slate-400">{hint}</p>}
+      {hint && <p className="text-xs text-slate-400 dark:text-slate-500">{hint}</p>}
     </div>
   );
 }
@@ -162,41 +163,41 @@ export default function UserEditPage({
 
   if (isLoading || !user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100/40 p-4 sm:p-6 lg:p-8">
+      <div className="bg-gradient-to-br from-slate-50 via-white to-slate-100/40 dark:bg-none">
         <div className="mx-auto max-w-5xl space-y-6">
           <div className="flex items-center justify-between gap-3">
             <Link
               href="/users"
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 shadow-sm transition-colors hover:bg-slate-50 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-slate-100"
               aria-label="Back"
             >
               <ArrowLeft className="h-5 w-5" />
             </Link>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
                 Edit User
               </h1>
-              <p className="mt-0.5 text-sm text-slate-500">
+              <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                 Update user details
               </p>
             </div>
           </div>
           <div className="space-y-6 lg:grid-cols-3">
-            <section className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 animate-pulse">
+            <section className="lg:col-span-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm sm:p-6 animate-pulse">
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="h-11 rounded-xl bg-slate-100" />
-                <div className="h-11 rounded-xl bg-slate-100" />
-                <div className="h-11 rounded-xl bg-slate-100" />
-                <div className="h-11 rounded-xl bg-slate-100" />
+                <div className="h-11 rounded-xl bg-slate-100 dark:bg-slate-800" />
+                <div className="h-11 rounded-xl bg-slate-100 dark:bg-slate-800" />
+                <div className="h-11 rounded-xl bg-slate-100 dark:bg-slate-800" />
+                <div className="h-11 rounded-xl bg-slate-100 dark:bg-slate-800" />
               </div>
             </section>
-            <aside className="lg:col-span-1 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 animate-pulse">
+            <aside className="lg:col-span-1 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm sm:p-6 animate-pulse">
               <div className="space-y-3">
-                <div className="h-4 w-32 rounded-md bg-slate-100" />
-                <div className="h-4 w-24 rounded-md bg-slate-100" />
-                <div className="h-px bg-slate-200" />
-                <div className="h-10 w-24 rounded-md bg-slate-100" />
-                <div className="h-10 w-24 rounded-md bg-slate-100" />
+                <div className="h-4 w-32 rounded-md bg-slate-100 dark:bg-slate-800" />
+                <div className="h-4 w-24 rounded-md bg-slate-100 dark:bg-slate-800" />
+                <div className="h-px bg-slate-200 dark:bg-slate-700" />
+                <div className="h-10 w-24 rounded-md bg-slate-100 dark:bg-slate-800" />
+                <div className="h-10 w-24 rounded-md bg-slate-100 dark:bg-slate-800" />
               </div>
             </aside>
           </div>
@@ -206,23 +207,23 @@ export default function UserEditPage({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100/40 p-4 sm:p-6 lg:p-8">
+    <div className="bg-gradient-to-br from-slate-50 via-white to-slate-100/40 dark:bg-none">
       <div className="mx-auto max-w-5xl space-y-6">
         {/* ---------- Header ---------- */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <Link
               href="/users"
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 shadow-sm transition-colors hover:bg-slate-50 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-slate-100"
               aria-label="Back"
             >
               <ArrowLeft className="h-5 w-5" />
             </Link>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
                 Edit User
               </h1>
-              <p className="mt-0.5 text-sm text-slate-500">
+              <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                 Update user details
               </p>
             </div>
@@ -237,10 +238,10 @@ export default function UserEditPage({
           {/* ---------- Main column ---------- */}
           <div className="space-y-6 lg:col-span-2">
             {/* User details */}
-            <section className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm sm:p-6 ring-1 ring-inset ring-slate-100/60">
+            <section className="rounded-2xl border border-slate-200/70 dark:border-slate-700/70 bg-white dark:bg-slate-900 p-5 shadow-sm sm:p-6 ring-1 ring-inset ring-slate-100/60 dark:ring-slate-700/60">
               <div className="mb-4 flex items-center gap-2">
-                <User className="h-4 w-4 text-slate-400" />
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                <User className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   User Details
                 </h2>
               </div>
@@ -251,7 +252,7 @@ export default function UserEditPage({
                     value={form.nameEn}
                     onChange={(e) => updateField("nameEn", e.target.value)}
                     placeholder="Full name"
-                    className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-3 pr-3 text-sm text-slate-900 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="h-11 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 pl-3 pr-3 text-sm text-slate-900 dark:text-slate-100 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
                 </Field>
                 <Field label="Name (Bengali)">
@@ -260,32 +261,32 @@ export default function UserEditPage({
                     value={form.nameBn}
                     onChange={(e) => updateField("nameBn", e.target.value)}
                     placeholder="পূর্ণ নাম"
-                    className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-3 pr-3 text-sm text-slate-900 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="h-11 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 pl-3 pr-3 text-sm text-slate-900 dark:text-slate-100 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
                 </Field>
                 <Field label="Email" required>
                   <div className="relative">
-                    <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                     <input
                       id="email"
                       type="email"
                       value={form.email}
                       onChange={(e) => updateField("email", e.target.value)}
                       placeholder="name@company.com"
-                      className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-900 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      className="h-11 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 pl-9 pr-3 text-sm text-slate-900 dark:text-slate-100 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                     />
                   </div>
                 </Field>
                 <Field label="Phone">
                   <div className="relative">
-                    <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                     <input
                       id="phone"
                       type="tel"
                       value={form.phone}
                       onChange={(e) => updateField("phone", e.target.value)}
                       placeholder="+880 1XXX-XXXXXX"
-                      className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-900 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      className="h-11 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 pl-9 pr-3 text-sm text-slate-900 dark:text-slate-100 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                     />
                   </div>
                 </Field>
@@ -296,9 +297,9 @@ export default function UserEditPage({
                       type="checkbox"
                       checked={form.isActive}
                       onChange={(e) => updateField("isActive", e.target.checked)}
-                      className="h-4 w-4 rounded border border-slate-300 text-slate-600 focus:ring-primary"
+                      className="h-4 w-4 rounded border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 focus:ring-primary"
                     />
-                    <label htmlFor="isActive" className="text-sm text-slate-600 cursor-pointer">
+                    <label htmlFor="isActive" className="text-sm text-slate-600 dark:text-slate-400 cursor-pointer">
                       Mark user as active
                     </label>
                   </div>
@@ -309,42 +310,42 @@ export default function UserEditPage({
 
           {/* ---------- Summary sidebar ---------- */}
           <aside className="lg:col-span-1">
-            <div className="sticky top-6 space-y-4 rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm sm:p-6 group relative overflow-hidden">
+            <div className="sticky top-6 space-y-4 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-5 shadow-sm sm:p-6 group relative overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-emerald-500 to-blue-500" />
               <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4 text-slate-400" />
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                <FileText className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   Summary
                 </h2>
               </div>
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-500">Name</span>
-                  <span className="font-semibold text-slate-900 truncate max-w-[120px]">
+                  <span className="text-slate-500 dark:text-slate-400">Name</span>
+                  <span className="font-semibold text-slate-900 dark:text-slate-100 truncate max-w-[120px]">
                     {form.nameEn || "—"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-500">Email</span>
-                  <span className="font-semibold text-slate-900 truncate max-w-[120px]">
+                  <span className="text-slate-500 dark:text-slate-400">Email</span>
+                  <span className="font-semibold text-slate-900 dark:text-slate-100 truncate max-w-[120px]">
                     {form.email || "—"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-500">Phone</span>
-                  <span className="font-semibold text-slate-900 truncate max-w-[120px]">
+                  <span className="text-slate-500 dark:text-slate-400">Phone</span>
+                  <span className="font-semibold text-slate-900 dark:text-slate-100 truncate max-w-[120px]">
                     {form.phone || "—"}
                   </span>
                 </div>
-                <div className="h-px bg-slate-200" />
+                <div className="h-px bg-slate-200 dark:bg-slate-700" />
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-500">Status</span>
+                  <span className="text-slate-500 dark:text-slate-400">Status</span>
                   <span
                     className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium ${
                       form.isActive
                         ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                        : "border-slate-200 bg-slate-50 text-slate-600"
+                        : "border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
                     }`}
                   >
                     <span
@@ -357,7 +358,7 @@ export default function UserEditPage({
                 </div>
               </div>
 
-              <div className="h-px bg-slate-200" />
+              <div className="h-px bg-slate-200 dark:bg-slate-700" />
 
               {/* Validation hint */}
               {(form.nameEn === "" || form.email === "") && (
@@ -396,7 +397,7 @@ export default function UserEditPage({
               <button
                 type="button"
                 onClick={() => router.push("/users")}
-                className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
+                className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-medium text-slate-600 dark:text-slate-400 transition-colors hover:bg-slate-50 hover:dark:bg-slate-800"
               >
                 <X className="h-4 w-4" />
                 Cancel

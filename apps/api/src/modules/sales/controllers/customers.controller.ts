@@ -28,6 +28,11 @@ export class CustomersController {
     return this.svc.list(tenantId, search);
   }
 
+  @Get(":id")
+  findOne(@TenantId() tenantId: string, @Param("id") id: string) {
+    return this.svc.findOne(tenantId, id);
+  }
+
   @Post()
   @UseGuards(RolesGuard, PermissionsGuard)
   @Roles("owner", "admin", "sales")

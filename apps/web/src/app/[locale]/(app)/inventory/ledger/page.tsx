@@ -7,8 +7,9 @@ import { apiFetch } from "@/lib/api";
 import { ArrowLeft } from "lucide-react";
 import type { StockMovement } from "@/lib/inventory-types";
 import { useRouter } from "next/navigation";
+import { apiUrl } from "@/lib/config";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API = apiUrl;
 function getToken() { return typeof window !== "undefined" ? localStorage.getItem("accessToken") || "" : ""; }
 function getTenant() { return typeof window !== "undefined" ? localStorage.getItem("tenantId") || "" : ""; }
 

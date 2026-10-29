@@ -16,8 +16,9 @@ import {
   Box,
 } from "lucide-react";
 import type { Category, Unit } from "@/lib/inventory-types";
+import { apiUrl } from "@/lib/config";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API = apiUrl;
 function getToken() {
   return typeof window !== "undefined" ? localStorage.getItem("accessToken") || "" : "";
 }
@@ -65,13 +66,13 @@ function Field({
     <div className="space-y-1.5">
       <label
         htmlFor={htmlFor}
-        className="flex items-center gap-1 text-sm font-medium text-slate-700"
+        className="flex items-center gap-1 text-sm font-medium text-slate-700 dark:text-slate-300"
       >
         {label}
         {required && <span className="text-rose-500">*</span>}
       </label>
       {children}
-      {hint && <p className="text-xs text-slate-400">{hint}</p>}
+      {hint && <p className="text-xs text-slate-400 dark:text-slate-500">{hint}</p>}
     </div>
   );
 }
@@ -96,15 +97,15 @@ function Select({
   return (
     <div className="relative">
       {Icon && (
-        <Icon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        <Icon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
       )}
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required={required}
-        className={`h-11 w-full appearance-none rounded-xl border border-slate-200 bg-white ${
+        className={`h-11 w-full appearance-none rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 ${
           Icon ? "pl-9" : "pl-3"
-        } pr-9 text-sm text-slate-900 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50`}
+        } pr-9 text-sm text-slate-900 dark:text-slate-100 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50`}
       >
         {placeholder && (
           <option value="">{placeholder}</option>
@@ -112,10 +113,10 @@ function Select({
         {children}
       </select>
       {loading ? (
-        <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-slate-400" />
+        <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-slate-400 dark:text-slate-500" />
       ) : (
         <svg
-          className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+          className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -217,22 +218,22 @@ export default function NewProductPage() {
   /* loading state */
   if (categoriesQuery.isLoading || unitsQuery.isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100/40 p-4 sm:p-6 lg:p-8">
+      <div className="bg-gradient-to-br from-slate-50 via-white to-slate-100/40 dark:bg-none">
         <div className="mx-auto max-w-5xl space-y-6">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => router.back()}
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 shadow-sm transition-colors hover:bg-slate-50 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-slate-100"
                 aria-label="Back"
               >
                 <ArrowLeft className="h-5 w-5" />
               </button>
               <div>
-                <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
                   {t("newProduct")}
                 </h1>
-                <p className="mt-0.5 text-sm text-slate-500">
+                <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                   Add a new product to your inventory
                 </p>
               </div>
@@ -240,29 +241,29 @@ export default function NewProductPage() {
           </div>
           <form className="grid gap-6 lg:grid-cols-3">
             <div className="space-y-6 lg:col-span-2">
-              <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 animate-pulse">
+              <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm sm:p-6 animate-pulse">
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="h-11 rounded-xl bg-slate-100" />
-                  <div className="h-11 rounded-xl bg-slate-100" />
-                  <div className="h-11 rounded-xl bg-slate-100" />
-                  <div className="h-11 rounded-xl bg-slate-100" />
-                  <div className="h-11 rounded-xl bg-slate-100" />
-                  <div className="h-11 rounded-xl bg-slate-100" />
+                  <div className="h-11 rounded-xl bg-slate-100 dark:bg-slate-800" />
+                  <div className="h-11 rounded-xl bg-slate-100 dark:bg-slate-800" />
+                  <div className="h-11 rounded-xl bg-slate-100 dark:bg-slate-800" />
+                  <div className="h-11 rounded-xl bg-slate-100 dark:bg-slate-800" />
+                  <div className="h-11 rounded-xl bg-slate-100 dark:bg-slate-800" />
+                  <div className="h-11 rounded-xl bg-slate-100 dark:bg-slate-800" />
                 </div>
               </section>
             </div>
             <aside className="lg:col-span-1">
-              <div className="sticky top-6 space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 animate-pulse">
+              <div className="sticky top-6 space-y-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm sm:p-6 animate-pulse">
                 <div className="space-y-3">
-                  <div className="h-4 w-32 rounded-md bg-slate-100" />
-                  <div className="h-4 w-24 rounded-md bg-slate-100" />
-                  <div className="h-px bg-slate-200" />
-                  <div className="h-10 w-24 rounded-md bg-slate-100" />
-                  <div className="h-10 w-24 rounded-md bg-slate-100" />
+                  <div className="h-4 w-32 rounded-md bg-slate-100 dark:bg-slate-800" />
+                  <div className="h-4 w-24 rounded-md bg-slate-100 dark:bg-slate-800" />
+                  <div className="h-px bg-slate-200 dark:bg-slate-700" />
+                  <div className="h-10 w-24 rounded-md bg-slate-100 dark:bg-slate-800" />
+                  <div className="h-10 w-24 rounded-md bg-slate-100 dark:bg-slate-800" />
                 </div>
-                <div className="h-px bg-slate-200" />
-                <div className="h-10 w-full rounded-xl bg-slate-100" />
-                <div className="h-10 w-full rounded-xl bg-slate-100" />
+                <div className="h-px bg-slate-200 dark:bg-slate-700" />
+                <div className="h-10 w-full rounded-xl bg-slate-100 dark:bg-slate-800" />
+                <div className="h-10 w-full rounded-xl bg-slate-100 dark:bg-slate-800" />
               </div>
             </aside>
           </form>
@@ -272,23 +273,23 @@ export default function NewProductPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100/40 p-4 sm:p-6 lg:p-8">
+    <div className="bg-gradient-to-br from-slate-50 via-white to-slate-100/40 dark:bg-none">
       <div className="mx-auto max-w-5xl space-y-6">
         {/* ---------- Header ---------- */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.back()}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 shadow-sm transition-colors hover:bg-slate-50 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-slate-100"
               aria-label="Back"
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
                 {t("newProduct")}
               </h1>
-              <p className="mt-0.5 text-sm text-slate-500">
+              <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                 Add a new product to your inventory
               </p>
             </div>
@@ -303,10 +304,10 @@ export default function NewProductPage() {
           {/* ---------- Main column ---------- */}
           <div className="space-y-6 lg:col-span-2">
             {/* Product details */}
-            <section className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm sm:p-6 ring-1 ring-inset ring-slate-100/60">
+            <section className="rounded-2xl border border-slate-200/70 dark:border-slate-700/70 bg-white dark:bg-slate-900 p-5 shadow-sm sm:p-6 ring-1 ring-inset ring-slate-100/60 dark:ring-slate-700/60">
               <div className="mb-4 flex items-center gap-2">
-                <Package className="h-4 w-4 text-slate-400" />
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                <Package className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   Product Details
                 </h2>
               </div>
@@ -317,7 +318,7 @@ export default function NewProductPage() {
                     value={form.sku}
                     onChange={(e) => updateField("sku", e.target.value)}
                     placeholder="SKU"
-                    className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-3 pr-3 text-sm text-slate-900 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="h-11 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 pl-3 pr-3 text-sm text-slate-900 dark:text-slate-100 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
                 </Field>
                 <Field label={`${t("name")} (EN)`} required>
@@ -326,7 +327,7 @@ export default function NewProductPage() {
                     value={form.nameEn}
                     onChange={(e) => updateField("nameEn", e.target.value)}
                     placeholder="Product name"
-                    className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-3 pr-3 text-sm text-slate-900 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="h-11 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 pl-3 pr-3 text-sm text-slate-900 dark:text-slate-100 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
                 </Field>
                 <Field label={`${t("name")} (BN)`}>
@@ -335,7 +336,7 @@ export default function NewProductPage() {
                     value={form.nameBn}
                     onChange={(e) => updateField("nameBn", e.target.value)}
                     placeholder="পণ্যের নাম"
-                    className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-3 pr-3 text-sm text-slate-900 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="h-11 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 pl-3 pr-3 text-sm text-slate-900 dark:text-slate-100 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
                 </Field>
                 <Field label={t("category")} required>
@@ -370,7 +371,7 @@ export default function NewProductPage() {
                 </Field>
                 <Field label={t("costPrice")} hint="Purchase price per unit">
                   <div className="relative">
-                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400 dark:text-slate-500">
                       $
                     </span>
                     <input
@@ -381,13 +382,13 @@ export default function NewProductPage() {
                       value={form.costPrice}
                       onChange={(e) => updateField("costPrice", Number(e.target.value))}
                       inputMode="decimal"
-                      className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-900 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      className="h-11 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 pl-9 pr-3 text-sm text-slate-900 dark:text-slate-100 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                     />
                   </div>
                 </Field>
                 <Field label={t("sellingPrice")} hint="Sale price per unit">
                   <div className="relative">
-                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400 dark:text-slate-500">
                       $
                     </span>
                     <input
@@ -398,7 +399,7 @@ export default function NewProductPage() {
                       value={form.sellingPrice}
                       onChange={(e) => updateField("sellingPrice", Number(e.target.value))}
                       inputMode="decimal"
-                      className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-900 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      className="h-11 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 pl-9 pr-3 text-sm text-slate-900 dark:text-slate-100 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                     />
                   </div>
                 </Field>
@@ -406,17 +407,17 @@ export default function NewProductPage() {
             </section>
 
             {/* Stock settings */}
-            <section className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm sm:p-6 ring-1 ring-inset ring-slate-100/60">
+            <section className="rounded-2xl border border-slate-200/70 dark:border-slate-700/70 bg-white dark:bg-slate-900 p-5 shadow-sm sm:p-6 ring-1 ring-inset ring-slate-100/60 dark:ring-slate-700/60">
               <div className="mb-4 flex items-center gap-2">
-                <Box className="h-4 w-4 text-slate-400" />
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                <Box className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   Stock Settings
                 </h2>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field label={t("reorderLevel")} hint="Minimum stock before reorder">
                   <div className="relative">
-                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400 dark:text-slate-500">
                       #
                     </span>
                     <input
@@ -427,7 +428,7 @@ export default function NewProductPage() {
                       value={form.reorderLevel}
                       onChange={(e) => updateField("reorderLevel", Number(e.target.value))}
                       inputMode="decimal"
-                      className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-900 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      className="h-11 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 pl-9 pr-3 text-sm text-slate-900 dark:text-slate-100 shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                     />
                   </div>
                 </Field>
@@ -437,31 +438,31 @@ export default function NewProductPage() {
 
           {/* ---------- Summary sidebar ---------- */}
           <aside className="lg:col-span-1">
-            <div className="sticky top-6 space-y-4 rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm sm:p-6 group relative overflow-hidden">
+            <div className="sticky top-6 space-y-4 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-5 shadow-sm sm:p-6 group relative overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-emerald-500 to-blue-500" />
               <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4 text-slate-400" />
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                <FileText className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   Summary
                 </h2>
               </div>
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-500">Cost price</span>
-                  <span className="font-semibold text-slate-900">
+                  <span className="text-slate-500 dark:text-slate-400">Cost price</span>
+                  <span className="font-semibold text-slate-900 dark:text-slate-100">
                     {formatCurrency(form.costPrice)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-500">Selling price</span>
-                  <span className="font-semibold text-slate-900">
+                  <span className="text-slate-500 dark:text-slate-400">Selling price</span>
+                  <span className="font-semibold text-slate-900 dark:text-slate-100">
                     {formatCurrency(form.sellingPrice)}
                   </span>
                 </div>
-                <div className="h-px bg-slate-200" />
+                <div className="h-px bg-slate-200 dark:bg-slate-700" />
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-slate-600">
+                  <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
                     Margin
                   </span>
                   <span
@@ -473,7 +474,7 @@ export default function NewProductPage() {
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-slate-600">
+                  <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
                     Margin %
                   </span>
                   <span
@@ -486,7 +487,7 @@ export default function NewProductPage() {
                 </div>
               </div>
 
-              <div className="h-px bg-slate-200" />
+              <div className="h-px bg-slate-200 dark:bg-slate-700" />
 
               {/* Validation hint */}
               {(form.sku === "" || form.nameEn === "" || form.categoryId === "" || form.unitId === "") && (
@@ -525,7 +526,7 @@ export default function NewProductPage() {
               <button
                 type="button"
                 onClick={() => router.back()}
-                className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
+                className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-medium text-slate-600 dark:text-slate-400 transition-colors hover:bg-slate-50 hover:dark:bg-slate-800"
               >
                 <X className="h-4 w-4" />
                 Cancel

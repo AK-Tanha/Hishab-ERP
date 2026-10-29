@@ -24,8 +24,12 @@ export class InvoicesService {
     private dataSource: DataSource,
   ) {}
 
-  async list(tenantId: string) {
-    return this.invoiceRepo.find({ where: { tenantId, deletedAt: IsNull() }, order: { createdAt: "DESC" }, relations: ["customer", "items"] });
+  async list(tenantId: string, customerId?: string) {
+    return this.invoiceRepo.find({
+      where: { tenantId, deletedAt: IsNull(), ...(customerId ? { customerId } : {}) },
+      order: { createdAt: "DESC" },
+      relations: ["customer", "items"],
+    });
   }
 
   async findOne(tenantId: string, id: string) {

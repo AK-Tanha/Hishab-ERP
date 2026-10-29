@@ -21,8 +21,9 @@ import {
   ArrowUpRight,
   Book,
 } from "lucide-react";
+import { apiUrl } from "@/lib/config";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API = apiUrl;
 function getToken() {
   return typeof window !== "undefined" ? localStorage.getItem("accessToken") || "" : "";
 }
@@ -51,7 +52,7 @@ function getTypeIcon(type: string) {
     case "expense":
       return { icon: AlertCircle, color: "text-rose-600", bg: "bg-rose-50", border: "border-rose-200", tint: "from-rose-500/10 to-rose-500/5" };
     default:
-      return { icon: FileText, color: "text-slate-600", bg: "bg-slate-50", border: "border-slate-200", tint: "from-slate-500/10 to-slate-500/5" };
+      return { icon: FileText, color: "text-slate-600 dark:text-slate-400", bg: "bg-slate-50 dark:bg-slate-800", border: "border-slate-200 dark:border-slate-800", tint: "from-slate-500/10 dark:from-white/10 to-slate-500/5 dark:to-white/5" };
   }
 }
 
@@ -114,7 +115,7 @@ export default function ChartOfAccountsPage() {
 
   return (
     <PageGuard requiredPermission="accounting.*" redirectTo="/dashboard">
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100/40 p-4 sm:p-6 lg:p-8">
+      <div className="bg-gradient-to-br from-slate-50 via-white to-slate-100/40 dark:bg-none">
         <div className="mx-auto max-w-6xl space-y-6">
           {/* ---------- Header ---------- */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -123,10 +124,10 @@ export default function ChartOfAccountsPage() {
                 <Book className="h-5 w-5" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
                   {t("chartOfAccounts")}
                 </h1>
-                <p className="mt-0.5 text-sm text-slate-500">
+                <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                   Manage your chart of accounts in one place
                 </p>
               </div>
@@ -180,22 +181,22 @@ export default function ChartOfAccountsPage() {
               return (
                 <div
                   key={stat.label}
-                  className="relative overflow-hidden rounded-2xl border border-slate-200/60 bg-white p-4 shadow-sm sm:p-5 transition-all hover:shadow-md hover:-translate-y-1 group"
+                  className="relative overflow-hidden rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-4 shadow-sm sm:p-5 transition-all hover:shadow-md hover:-translate-y-1 group"
                 >
                   <div
                     className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${stat.tint} opacity-0 group-hover:opacity-50 transition-opacity duration-300`}
                   />
                   <div className="relative flex items-start justify-between">
                     <div>
-                      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         {stat.label}
                       </p>
-                      <p className="mt-2 text-xl font-bold text-slate-900 sm:text-2xl">
+                      <p className="mt-2 text-xl font-bold text-slate-900 dark:text-slate-100 sm:text-2xl">
                         {stat.value}
                       </p>
                     </div>
                     <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-xl ${stat.iconBg} ring-1 ring-slate-100`}
+                      className={`flex h-10 w-10 items-center justify-center rounded-xl ${stat.iconBg} ring-1 ring-slate-100 dark:ring-slate-700`}
                     >
                       <Icon className={`h-5 w-5 ${stat.iconColor}`} />
                     </div>
@@ -208,16 +209,16 @@ export default function ChartOfAccountsPage() {
           {/* ---------- Toolbar ---------- */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="relative flex-1 sm:max-w-xs">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search account code or name..."
-                className="h-10 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-900 shadow-sm transition-colors placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="h-10 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 pl-9 pr-3 text-sm text-slate-900 dark:text-slate-100 shadow-sm transition-colors placeholder:text-slate-400 placeholder:dark:text-slate-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
-            <div className="flex items-center gap-1 overflow-x-auto rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
+            <div className="flex items-center gap-1 overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-1 shadow-sm">
               {filterTabs.map((tab) => (
                 <button
                   key={tab.id}
@@ -225,7 +226,7 @@ export default function ChartOfAccountsPage() {
                   className={`relative shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
                     filter === tab.id
                       ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-slate-600 hover:bg-slate-100"
+                      : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 hover:dark:bg-slate-800"
                   }`}
                 >
                   {tab.label}
@@ -240,20 +241,20 @@ export default function ChartOfAccountsPage() {
               {[...Array(4)].map((_, i) => (
                 <div
                   key={i}
-                  className="h-28 animate-pulse rounded-2xl border border-slate-200 bg-white/60"
+                  className="h-28 animate-pulse rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60"
                   style={{ animationDelay: `${i * 80}ms` }}
                 />
               ))}
             </div>
           ) : filtered.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
-                <FileText className="h-8 w-8 text-slate-400" />
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-6 py-16 text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800">
+                <FileText className="h-8 w-8 text-slate-400 dark:text-slate-500" />
               </div>
-              <h3 className="mt-4 text-base font-semibold text-slate-900">
+              <h3 className="mt-4 text-base font-semibold text-slate-900 dark:text-slate-100">
                 {search || filter !== "all" ? "No matching accounts" : "No accounts yet"}
               </h3>
-              <p className="mt-1 max-w-sm text-sm text-slate-500">
+              <p className="mt-1 max-w-sm text-sm text-slate-500 dark:text-slate-400">
                 {search || filter !== "all"
                   ? "Try adjusting your search query or filter."
                   : "Create your first account to get started."}
@@ -278,17 +279,17 @@ export default function ChartOfAccountsPage() {
                   <Link
                     key={a.id}
                     href={`/accounting/ledger/${a.id}`}
-                    className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:border-primary/30 hover:shadow-xl hover:-translate-y-1 sm:p-5 block"
+                    className="group relative overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm transition-all hover:border-primary/30 hover:shadow-xl hover:-translate-y-1 sm:p-5 block"
                   >
                     <div className="flex flex-col gap-4 pl-2 sm:flex-row sm:items-center sm:justify-between">
                       {/* Identity */}
                       <div className="flex min-w-0 items-center gap-3">
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 text-sm font-semibold text-slate-700 ring-1 ring-slate-200/60">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-slate-100 dark:from-slate-700 to-slate-200 dark:to-slate-600 text-sm font-semibold text-slate-700 dark:text-slate-300 ring-1 ring-slate-200/60 dark:ring-slate-700/60">
                           {a.code.charAt(0)}
                         </div>
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="font-semibold text-slate-900 truncate">
+                            <span className="font-semibold text-slate-900 dark:text-slate-100 truncate">
                               {a.nameEn}
                             </span>
                             <span
@@ -298,13 +299,13 @@ export default function ChartOfAccountsPage() {
                               <span className="capitalize">{a.type}</span>
                             </span>
                           </div>
-                          <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-slate-500">
+                          <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
                             <span className="truncate max-w-[160px] font-mono">
                               {a.code}
                             </span>
                             {a.nameBn && (
                               <>
-                                <span className="text-slate-300">•</span>
+                                <span className="text-slate-300 dark:text-slate-600">•</span>
                                 <span className="truncate max-w-[160px] text-xs lang-bn">{a.nameBn}</span>
                               </>
                             )}
@@ -316,19 +317,19 @@ export default function ChartOfAccountsPage() {
                       <div className="flex items-center gap-2">
                         <Link
                           href={`/accounting/ledger/${a.id}`}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900"
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 transition-colors hover:bg-slate-50 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-slate-100"
                           aria-label="View account"
                         >
                           <Eye className="h-4 w-4" />
                         </Link>
                         <button
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900"
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 transition-colors hover:bg-slate-50 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-slate-100"
                           aria-label="Download account"
                         >
                           <Download className="h-4 w-4" />
                         </button>
                         <button
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900"
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 transition-colors hover:bg-slate-50 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-slate-100"
                           aria-label="More actions"
                         >
                           <MoreHorizontal className="h-4 w-4" />
@@ -343,10 +344,10 @@ export default function ChartOfAccountsPage() {
 
           {/* ---------- Footer count ---------- */}
           {!isLoading && filtered.length > 0 && (
-            <div className="flex items-center justify-between px-1 pt-2 text-xs text-slate-500">
+            <div className="flex items-center justify-between px-1 pt-2 text-xs text-slate-500 dark:text-slate-400">
               <span>
-                Showing <span className="font-medium text-slate-700">{filtered.length}</span> of{" "}
-                <span className="font-medium text-slate-700">{accounts.length}</span> accounts
+                Showing <span className="font-medium text-slate-700 dark:text-slate-300">{filtered.length}</span> of{" "}
+                <span className="font-medium text-slate-700 dark:text-slate-300">{accounts.length}</span> accounts
               </span>
               <span className="inline-flex items-center gap-1">
                 <ArrowUpRight className="h-3 w-3" />

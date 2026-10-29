@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/config";
 export type RoleCode = "owner" | "admin" | "accountant" | "sales" | "storekeeper";
 
 interface JwtPayload {
@@ -68,7 +69,7 @@ export async function getCurrentUser(): Promise<{ nameEn?: string; email?: strin
   const tenantId = localStorage.getItem("tenantId");
   if (!token) return null;
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/v1/auth/me`, {
+    const res = await fetch(`${apiUrl}/api/v1/auth/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "X-Tenant-ID": tenantId ?? "",
@@ -76,7 +77,9 @@ export async function getCurrentUser(): Promise<{ nameEn?: string; email?: strin
       },
     });
     if (!res.ok) return null;
-    return res.json();
+    // Responses are wrapped by TransformInterceptor: { data: user, timestamp }
+    const body = (await res.json()) as { data?: { nameEn?: string; email?: string; tenantId?: string } };
+    return body.data ?? null;
   } catch {
     return null;
   }
