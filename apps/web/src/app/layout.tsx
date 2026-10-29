@@ -20,7 +20,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const messages = await getMessages();
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${notoBn.variable} antialiased`}>
+      <body className={`${inter.variable} ${notoBn.variable} antialiased`} suppressHydrationWarning>
         <script
           dangerouslySetInnerHTML={{
             __html: `if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js')); }`,

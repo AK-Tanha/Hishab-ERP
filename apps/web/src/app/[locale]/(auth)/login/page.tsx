@@ -29,9 +29,9 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, tenantSubdomain: subdomain }),
       });
-      const resData = res as { tokens?: { accessToken?: string; refreshToken?: string }; user?: { tenantId?: string } };
-      const tokens = resData.tokens;
-      const user = resData.user;
+      const resData = res as { data?: { tokens?: { accessToken?: string; refreshToken?: string }; user?: { tenantId?: string } } };
+      const tokens = resData.data?.tokens;
+      const user = resData.data?.user;
       if (tokens?.accessToken) {
         localStorage.setItem("accessToken", tokens.accessToken);
         if (tokens.refreshToken) localStorage.setItem("refreshToken", tokens.refreshToken);

@@ -44,8 +44,8 @@ export default function SignupPage() {
           password,
         }),
       });
-      const resData = res as { tenant?: { id: string }; user?: { tenantId?: string } };
-      const user = resData.user;
+      const resData = res as { data?: { tenant?: { id: string }; user?: { tenantId?: string } } };
+      const user = resData.data?.user;
       if (user?.tenantId) {
         localStorage.setItem("tenantId", user.tenantId);
       }

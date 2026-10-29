@@ -23,7 +23,6 @@ SMTP_PORT=587
 SMTP_USER=...
 SMTP_PASS=...
 SMTP_FROM=Hishab ERP <noreply@yourdomain.com>
-CORS_ORIGIN=https://app.yourdomain.com
 DB_SYNCHRONIZE=false
 DB_MIGRATIONS_RUN=true
 ```
@@ -64,6 +63,7 @@ docker compose up -d   # postgres, redis, mailhog
 GitHub Actions runs lint → typecheck → test → build on every push/PR.
 
 ## Notes
+- CORS is configured in `apps/api/src/main.ts`: the API reflects the request origin (`Access-Control-Allow-Origin`), so no `CORS_ORIGIN` env var is needed. Make sure the API is running — if it is down, browsers report a misleading CORS error.
 - Always run migrations before starting a new version.
 - Keep `DB_SYNCHRONIZE=false` in production; use migrations.
 - Rotate JWT secrets periodically.

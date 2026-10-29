@@ -14,6 +14,18 @@ async function bootstrap() {
 
   app.use(helmet());
 
+  // Reflect the request origin so any deployed web origin (and localhost dev
+  // ports) works with credentials. No CORS_ORIGIN env var is used.
+  app.enableCors({
+    origin: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Tenant-ID", "X-Language"],
+    credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+    maxAge: 86400,
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -28,13 +40,6 @@ async function bootstrap() {
 
   app.enableVersioning({ type: VersioningType.URI, defaultVersion: "1" });
   app.setGlobalPrefix("api", { exclude: ["health"] });
-
-  app.enableCors({
-    origin: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Tenant-ID", "X-Language"],
-    credentials: true,
-  });
 
   const config = new DocumentBuilder()
     .setTitle("Hishab ERP API")

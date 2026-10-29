@@ -1,4 +1,4 @@
-const CACHE_NAME = "hishab-v1";
+const CACHE_NAME = "hishab-v2";
 const OFFLINE_URLS = ["/", "/manifest.json"];
 
 self.addEventListener("install", (event) => {
@@ -17,9 +17,13 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+  const url = new URL(event.request.url);
+  if (url.protocol !== "http:" && url.protocol !== "https:") return;
+  if (url.origin !== self.location.origin) return;
   event.respondWith(
     fetch(event.request)
       .then((res) => {
+        if (!res || res.status !== 200 || res.type !== "basic") return res;
         const copy = res.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
         return res;
