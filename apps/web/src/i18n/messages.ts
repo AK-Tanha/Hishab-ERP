@@ -283,7 +283,7 @@ export const bn = {
   dashboard: {
     todaysSales: "আজকের বিক্রয়",
     receivables: "প্রাপ্য",
-    payables: "পেয়েবল",
+    payables: "বকেয়া",
     lowStock: "কম স্টক",
     totalSales: "মোট বিক্রয়",
     totalCustomers: "গ্রাহক সংখ্যা",
