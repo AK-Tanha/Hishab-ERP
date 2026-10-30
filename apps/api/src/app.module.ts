@@ -5,6 +5,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { ThrottlerModule } from "@nestjs/throttler";
 import { TerminusModule } from "@nestjs/terminus";
 import { ClsModule } from "nestjs-cls";
+import { entities } from "./database/entities";
 import { appConfig, databaseConfig, jwtConfig, mailConfig, redisConfig } from "./config";
 import { AuthModule } from "./modules/auth/auth.module";
 import { TenantsModule } from "./modules/tenants/tenants.module";
@@ -39,7 +40,7 @@ import { AuditSubscriber } from "./common/subscribers/audit.subscriber";
         return {
           type: "postgres",
           url,
-          entities: ["dist/**/*.entity{.ts,.js}"],
+          entities,
           migrations: ["dist/database/migrations/*.js"],
           logging: config.get<boolean>("database.logging"),
           synchronize: config.get<boolean>("database.synchronize"),
