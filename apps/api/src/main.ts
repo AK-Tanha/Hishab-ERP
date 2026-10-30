@@ -1,6 +1,7 @@
-import { ValidationPipe, VersioningType } from "@nestjs/common";
+import { INestApplication, ValidationPipe, VersioningType } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
+import type { Request, Response } from "express";
 import { AppModule } from "./app.module";
 import { HttpExceptionFilter } from "./common/filters/http-exception.filter";
 import { LoggingInterceptor } from "./common/interceptors/logging.interceptor";
@@ -8,7 +9,11 @@ import { TransformInterceptor } from "./common/interceptors/transform.intercepto
 import { TenantInterceptor } from "./common/interceptors/tenant.interceptor";
 import helmet from "helmet";
 
-async function bootstrap() {
+let cachedApp: INestApplication | null = null;
+
+async function getApp(): Promise<INestApplication> {
+  if (cachedApp) return cachedApp;
+
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
 
   app.use(helmet());
@@ -49,10 +54,28 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api/docs", app, document);
 
+  await app.init();
+  cachedApp = app;
+  return app;
+}
+
+async function bootstrap() {
+  const app = await getApp();
   await app.listen(process.env.PORT ?? 3001);
   console.log(`Hishab API listening on port ${process.env.PORT ?? 3001}`);
 }
 
-void bootstrap();
+/**
+ * Vercel serverless entrypoint.
+ * Delegates each request to the underlying Express instance of the
+ * (cached) Nest application.
+ */
+export default async function handler(req: Request, res: Response) {
+  const app = await getApp();
+  app.getHttpAdapter().getInstance()(req, res);
+}
 
-import handler from "./handler";
+// Only start an HTTP listener when running outside Vercel (e.g. `node dist/main`).
+if (!process.env.VERCEL) {
+  void bootstrap();
+}
