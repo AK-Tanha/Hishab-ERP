@@ -55,4 +55,4 @@ async function bootstrap() {
 
 void bootstrap();
 
-export { handler } from "./handler";
+import handler from "./handler";

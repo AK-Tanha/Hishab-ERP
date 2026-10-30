@@ -58,7 +58,8 @@ async function createApp() {
   return app;
 }
 
-export async function handler(req: any, res: any) {
+// Export handler as default export for Vercel serverless
+export default async function handler(req: any, res: any) {
   const app = await createApp();
   const adapter = app.getHttpAdapter();
   adapter.reply(req, res);
