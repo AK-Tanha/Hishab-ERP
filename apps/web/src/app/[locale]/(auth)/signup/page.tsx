@@ -72,12 +72,9 @@ export default function SignupPage() {
               alt="Hishab ERP"
               width={75}
               height={44}
-              className="h-11 w-[75px] shrink-0 rounded-xl object-cover shadow-sm"
+              className="h-20 w-auto shrink-0 rounded-xl object-cover shadow-sm"
             />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
-            Hishab ERP
-          </h1>
           <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
             {tn("register")}
           </p>

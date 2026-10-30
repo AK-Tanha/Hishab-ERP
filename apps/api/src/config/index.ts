@@ -8,7 +8,7 @@ export const appConfig = registerAs("app", () => ({
 }));
 
 export const databaseConfig = registerAs("database", () => ({
-  url: process.env.DATABASE_URL || "postgres://hishab:hishab@localhost:5432/hishab",
+  url: process.env.DATABASE_URL || process.env.POSTGRES_URL || "postgres://hishab:hishab@localhost:5432/hishab",
   logging: process.env.DB_LOGGING === "true",
   synchronize: process.env.DB_SYNCHRONIZE === "true",
   migrationsRun: process.env.DB_MIGRATIONS_RUN === "true",
