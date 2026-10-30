@@ -5,7 +5,7 @@
   "description": "Hishab ERP API - NestJS modular monolith",
   "main": "dist/main",
   "scripts": {
-    "build": "nest build",
+    "build": "nest build && ncc build dist/main.js --out dist && mv dist/index.js dist/main.js",
     "start": "nest start",
     "dev": "nest start --watch",
     "start:dev": "nest start --watch",
