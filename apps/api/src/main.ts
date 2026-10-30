@@ -1,5 +1,4 @@
 import { ValidationPipe, VersioningType } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { AppModule } from "./app.module";
@@ -14,8 +13,6 @@ async function bootstrap() {
 
   app.use(helmet());
 
-  // Reflect the request origin so any deployed web origin (and localhost dev
-  // ports) works with credentials. No CORS_ORIGIN env var is used.
   app.enableCors({
     origin: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
@@ -53,8 +50,9 @@ async function bootstrap() {
   SwaggerModule.setup("api/docs", app, document);
 
   await app.listen(process.env.PORT ?? 3001);
-  // eslint-disable-next-line no-console
   console.log(`Hishab API listening on port ${process.env.PORT ?? 3001}`);
 }
 
 void bootstrap();
+
+export { handler } from "./handler";
